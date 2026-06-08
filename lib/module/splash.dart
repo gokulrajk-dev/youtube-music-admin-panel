@@ -12,7 +12,8 @@ class Splash extends StatefulWidget {
 class _SplashState extends State<Splash> {
   @override
   Widget build(BuildContext context) {
-    Future.delayed(const Duration(seconds: 3),()=>Get.toNamed(appRoute.mainHome));
+    Future.delayed(
+        const Duration(seconds: 3), () => Get.toNamed(appRoute.mainHome));
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(

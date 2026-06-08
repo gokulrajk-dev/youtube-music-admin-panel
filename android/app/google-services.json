@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "608508618310",
+    "project_id": "yt-music-admin-panel",
+    "storage_bucket": "yt-music-admin-panel.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:608508618310:android:010cee7c5ee59357248c47",
+        "android_client_info": {
+          "package_name": "com.example.basic_fundamental"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCAwiOr55AiQFtjOiY62wJLI3ttyRqX12Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

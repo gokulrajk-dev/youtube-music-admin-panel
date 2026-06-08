@@ -4,8 +4,7 @@ import 'Artist.dart';
 import 'album_module.dart';
 import 'genre.dart';
 
-class Song  {
-
+class Song {
   // @override
   // String? get song_title => title;
   //
@@ -19,7 +18,7 @@ class Song  {
   //
   // @override
   // String? get image => coverImage;
-  
+
   final int id;
   final String? title;
   final List<Artist>? artist;
@@ -32,7 +31,7 @@ class Song  {
   final String? lyrics;
   final String? language;
   final int? views;
-   int? likesCount;
+  int? likesCount;
   final SongStream? stream;
 
   Song({
@@ -62,24 +61,23 @@ class Song  {
       album: json['album'] != null ? Album.fromJson(json['album']) : null,
       songsFile: json['songs_file']?.toString(),
       coverImage: json['cover_image']?.toString(),
-      duration: json['duration']!=null? _parseDuration(json['duration']):null,
+      duration:
+          json['duration'] != null ? _parseDuration(json['duration']) : null,
       releaseDate: json['release_date']?.toString(),
       lyrics: json['lyrics']?.toString(),
       language: json['language']?.toString(),
       views: json['views'] ?? 0,
       likesCount: json['likes_count'] ?? 0,
-      stream: json['stream']!=null?SongStream.fromJson(json['stream']):null,
+      stream:
+          json['stream'] != null ? SongStream.fromJson(json['stream']) : null,
     );
   }
 
-  static Duration _parseDuration(String duration){
-    final part  = duration.split(':');
+  static Duration _parseDuration(String duration) {
+    final part = duration.split(':');
     return Duration(
-      hours: int.parse(part[0]),
-      minutes: int.parse(part[1]),
-      seconds: int.parse(part[2])
-    );
+        hours: int.parse(part[0]),
+        minutes: int.parse(part[1]),
+        seconds: int.parse(part[2]));
   }
-
-
 }

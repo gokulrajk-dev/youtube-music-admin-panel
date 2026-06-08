@@ -1,7 +1,7 @@
-
 import 'dart:convert';
 
-UserDetails userDetailsFromJson(String str) => UserDetails.fromJson(json.decode(str));
+UserDetails userDetailsFromJson(String str) =>
+    UserDetails.fromJson(json.decode(str));
 
 String userDetailsToJson(UserDetails data) => json.encode(data.toJson());
 
@@ -21,20 +21,18 @@ class UserDetails {
   final dynamic photoUrl;
 
   factory UserDetails.fromJson(Map<dynamic, dynamic> json) => UserDetails(
-    gmail: json["gmail"],
-    password: json["password"],
-    userName: json["user_name"],
-    phoneNumber: json["phone_number"],
-    photoUrl: json["photo_url"],
-  );
+        gmail: json["gmail"],
+        password: json["password"],
+        userName: json["user_name"],
+        phoneNumber: json["phone_number"],
+        photoUrl: json["photo_url"],
+      );
 
   Map<dynamic, dynamic> toJson() => {
-    "gmail": gmail,
-    "password": password,
-    "user_name": userName,
-    "phone_number": phoneNumber,
-    "photo_url": photoUrl,
-  };
+        "gmail": gmail,
+        "password": password,
+        "user_name": userName,
+        "phone_number": phoneNumber,
+        "photo_url": photoUrl,
+      };
 }
-
-

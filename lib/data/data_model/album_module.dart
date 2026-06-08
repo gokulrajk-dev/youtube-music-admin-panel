@@ -7,6 +7,7 @@ class Album {
   final String? releaseDate;
   final String? description;
   final List<Artist>? artists;
+
   // final List<Song>? songAlbum;
 
   Album({
@@ -26,9 +27,8 @@ class Album {
       coverImage: json['cover_image']?.toString(),
       releaseDate: json['release_date']?.toString(),
       description: json['description']?.toString(),
-      artists: (json['artists'] as List?)
-          ?.map((e) => Artist.fromJson(e))
-          .toList(),
+      artists:
+          (json['artists'] as List?)?.map((e) => Artist.fromJson(e)).toList(),
       // songAlbum: (json['song_album'] as List?)?.map((song)=>Song.fromJson(song)).toList(),
     );
   }

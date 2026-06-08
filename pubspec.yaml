@@ -44,8 +44,8 @@ dependencies:
   jwt_decoder: ^2.0.1
   flutter_dotenv: ^6.0.0
   dio: ^5.9.0
-  on_audio_query_forked: ^2.9.1
   just_audio: ^0.9.36
+  lottie: ^3.2.0
   just_audio_background:
   permission_handler: ^11.3.0
   shared_preferences: ^2.5.3
@@ -83,6 +83,12 @@ flutter:
   assets:
     - .env
     - assets/_joker1.png
+    - assets/lottie/loading.json
+    - assets/lottie/Gear.json
+    - assets/lottie/Earth globe rotating with Seamless loop animation.json
+    - assets/lottie/Alarm Clock.json
+    - assets/lottie/artist.json
+    - assets/lottie/song.json
     - assets/liked_pic.png
     - assets/img.png
     - assets/yt.png

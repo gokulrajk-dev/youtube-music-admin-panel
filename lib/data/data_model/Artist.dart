@@ -1,4 +1,3 @@
-
 class Artist {
   final int id;
   final String? artistName;
@@ -6,14 +5,12 @@ class Artist {
   final String? artistImage;
   final String? country;
 
-
   Artist({
     required this.id,
     this.artistName,
     this.artistBio,
     this.artistImage,
     this.country,
-
   });
 
   factory Artist.fromJson(Map<String, dynamic> json) {
