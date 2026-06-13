@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:basic_fundamental/route/app_route.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -21,11 +22,10 @@ class auth_google_login extends GetxController {
     // "234888009676-8iovn6e2h9p2hdc3upskfu99ssjkjoho.apps.googleusercontent.com",
     // serverClientId:
     // "234888009676-8iovn6e2h9p2hdc3upskfu99ssjkjoho.apps.googleusercontent.com",
-    clientId:
-        "608508618310-vgu2kr8321kcnomf7i84v04eh32udabk.apps.googleusercontent.com",
-    serverClientId:
-        "608508618310-vgu2kr8321kcnomf7i84v04eh32udabk.apps.googleusercontent.com",
+    clientId:dotenv.env['GOOGLE_CLIENT_AND_SERVER_ID'],
+    serverClientId: dotenv.env['GOOGLE_CLIENT_AND_SERVER_ID'],
   );
+
   final _storage = const FlutterSecureStorage();
 
   Rx<User?> firebaseUser = Rx<User?>(null);
@@ -115,7 +115,6 @@ class auth_google_login extends GetxController {
       Get.offAllNamed(appRoute.mainHome);
     } catch (e) {
       Get.snackbar("login failed", e.toString());
-      print("login error:${e.toString()}");
       Auth_service.isAuthenticate = false;
     }
   }

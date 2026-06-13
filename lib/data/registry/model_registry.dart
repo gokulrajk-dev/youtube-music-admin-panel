@@ -1,5 +1,6 @@
-import 'package:basic_fundamental/network/ApiEndpoint.dart';
 
+
+import '../../core/network/ApiEndpoint.dart';
 import '../../module/page/modelEditPage/widgets/model_detail/album_details.dart';
 import '../../module/page/modelEditPage/widgets/model_detail/artist_details.dart';
 import '../../module/page/modelEditPage/widgets/model_detail/genre_details.dart';

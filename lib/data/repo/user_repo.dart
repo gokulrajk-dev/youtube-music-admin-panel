@@ -1,8 +1,8 @@
-import 'package:basic_fundamental/network/ApiEndpoint.dart';
-import 'package:basic_fundamental/network/Dio_pri_client.dart';
-import 'package:basic_fundamental/network/Dio_public_client.dart';
 import 'package:dio/dio.dart';
 
+import '../../core/network/ApiEndpoint.dart';
+import '../../core/network/Dio_pri_client.dart';
+import '../../core/network/Dio_public_client.dart';
 import '../data_model/user_details.dart';
 
 class User_Respository {

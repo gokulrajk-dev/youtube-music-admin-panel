@@ -1,44 +1,3 @@
-// import 'package:flutter/material.dart';
-//
-// import '../../../../../data/data_model/Artist.dart';
-//
-// class ArtistDetail extends StatelessWidget {
-//   final Artist artist;
-//
-//   const ArtistDetail({
-//     super.key,
-//     required this.artist,
-//   });
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return SingleChildScrollView(
-//       child: Column(
-//         children: [
-//           CircleAvatar(
-//             radius: 60,
-//             backgroundImage: NetworkImage(
-//               artist.artistImage ?? '',
-//             ),
-//           ),
-//           const SizedBox(
-//             height: 20,
-//           ),
-//           Text(
-//             artist.artistName ?? '',
-//           ),
-//           Text(
-//             artist.country ?? '',
-//           ),
-//           Text(
-//             artist.artistBio ?? '',
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
-
 import 'package:basic_fundamental/module/page/main_home_page/mainHomeController.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -46,6 +5,9 @@ import 'package:get/get.dart';
 import '../../../../../data/data_model/Artist.dart';
 import '../../controller/modelEditPageController.dart';
 import '../helperwidget/helper_widget.dart';
+
+import '../forms/definitions/artist_form.dart';
+import '../forms/widgets/dynamic_form.dart';
 
 class ArtistDetail extends StatelessWidget {
   final Artist artist;
@@ -70,7 +32,18 @@ class ArtistDetail extends StatelessWidget {
                 // Top Bar
                 appBar(
                   title: 'Artist Profile',
-                  onTap: () {},
+                  onTap: () {
+                    getModelEditController.showMenu(
+                      context,
+                      () {
+                        getModelEditController.hideMenu();
+                        Get.to(() => DynamicFormPage(
+                              title: "Artist",
+                              fields: artistForm,
+                            ));
+                      },
+                    );
+                  },
                 ),
                 // Scrollable body
                 Expanded(

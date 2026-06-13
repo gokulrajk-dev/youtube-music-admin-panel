@@ -1,6 +1,3 @@
-// Empty file
-
-
 import '../../../../../../data/registry/model_type.dart';
 import '../definitions/artist_form.dart';
 

@@ -1,4 +1,6 @@
-import 'package:basic_fundamental/network/Dio_pri_client.dart';
+
+
+import '../../core/network/Dio_pri_client.dart';
 
 class dynamicApi<mod> {
   final dio = DioPrivateClient().dio;

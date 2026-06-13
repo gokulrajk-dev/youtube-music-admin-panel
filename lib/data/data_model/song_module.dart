@@ -24,7 +24,6 @@ class Song {
   final List<Artist>? artist;
   final List<Genre>? genre;
   final Album? album;
-  final String? songsFile;
   final String? coverImage;
   final Duration? duration;
   final String? releaseDate;
@@ -40,7 +39,6 @@ class Song {
     this.artist,
     this.genre,
     this.album,
-    this.songsFile,
     this.coverImage,
     this.duration,
     this.releaseDate,
@@ -59,7 +57,6 @@ class Song {
           (json['artist'] as List?)?.map((e) => Artist.fromJson(e)).toList(),
       genre: (json['genre'] as List?)?.map((e) => Genre.fromJson(e)).toList(),
       album: json['album'] != null ? Album.fromJson(json['album']) : null,
-      songsFile: json['songs_file']?.toString(),
       coverImage: json['cover_image']?.toString(),
       duration:
           json['duration'] != null ? _parseDuration(json['duration']) : null,

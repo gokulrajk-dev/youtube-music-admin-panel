@@ -13,7 +13,9 @@ class _SplashState extends State<Splash> {
   @override
   Widget build(BuildContext context) {
     Future.delayed(
-        const Duration(seconds: 3), () => Get.toNamed(appRoute.mainHome));
+        const Duration(seconds: 3), () => Get.toNamed(appRoute.mainHome)
+        // const Duration(seconds: 3), () => Get.to(DynamicFormPage(title: "Artist", fields: artistForm))
+    );
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(

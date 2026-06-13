@@ -1,6 +1,8 @@
-import 'package:basic_fundamental/network/Auth_Interceptor.dart';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+import 'Auth_Interceptor.dart';
 
 class DioPrivateClient {
   static final DioPrivateClient _instance = DioPrivateClient._internal();

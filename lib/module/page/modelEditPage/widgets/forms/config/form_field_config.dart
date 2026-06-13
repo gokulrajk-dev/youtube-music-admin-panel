@@ -4,6 +4,7 @@ enum FieldType {
   number,
   dropdown,
   image,
+  date,
 }
 
 class FormFieldConfig {

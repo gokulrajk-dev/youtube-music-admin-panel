@@ -1,4 +1,4 @@
-import 'package:basic_fundamental/network/refresh_dio.dart';
+import 'package:basic_fundamental/core/network/refresh_dio.dart';
 import 'package:basic_fundamental/service/TokenService.dart';
 import 'package:dio/dio.dart';
 

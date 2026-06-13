@@ -79,7 +79,7 @@ class _mainHomePageState extends State<mainHomePage> {
                 padding: const EdgeInsets.only(left: 20, right: 20),
                 child: ListView.builder(
                   shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   itemCount: getSong.gets_model.length,
                   itemBuilder: (context, index) {
                     final model = getSong.gets_model[index];
@@ -112,7 +112,7 @@ class _mainHomePageState extends State<mainHomePage> {
                                   child: Center(
                                     child: Text(
                                       model,
-                                      style: TextStyle(color: Colors.black),
+                                      style: const TextStyle(color: Colors.black),
                                     ),
                                   ),
                                 ),

@@ -27,6 +27,9 @@ ModelType getModelType(
     case "Songs":
       return ModelType.song;
 
+    case "album_rud":
+      return ModelType.album_rud;
+
     default:
       throw Exception(
         "Unknown model: $modelName",

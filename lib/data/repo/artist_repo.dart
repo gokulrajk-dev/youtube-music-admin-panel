@@ -1,6 +1,7 @@
-import 'package:basic_fundamental/network/ApiEndpoint.dart';
-import 'package:basic_fundamental/network/Dio_pri_client.dart';
 
+
+import '../../core/network/ApiEndpoint.dart';
+import '../../core/network/Dio_pri_client.dart';
 import '../data_model/Artist.dart';
 
 class Artist_crud {

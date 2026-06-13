@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 class mainHomeController extends base_controller {
   RxList<String> gets_model = <String>[].obs;
+  List<String> removeModels = ["video_song","Playlist","listen_History_Song_play_Playback","Queue","Like"];
   final GetModelCrud getModelCrud = GetModelCrud();
 
   @override
@@ -18,12 +19,14 @@ class mainHomeController extends base_controller {
       noerror();
       final result = await getModelCrud.getModelsName();
       gets_model.assignAll(result);
+      gets_model.removeWhere((element) => removeModels.contains(element));
     } catch (e) {
       set_error(e.toString());
     } finally {
       set_loading(false);
     }
   }
+
 
   Future<void> refreshHome(List<Future<dynamic>> futures) async {
     try {

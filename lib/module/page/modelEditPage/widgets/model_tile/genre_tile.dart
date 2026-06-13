@@ -5,6 +5,7 @@ import '../../../../../data/data_model/genre.dart';
 import '../../../../../data/registry/model_registry.dart';
 import '../../../../../data/registry/model_type.dart';
 import '../../view/modelDetailPageViews.dart';
+import '../helperwidget/helper_widget.dart';
 
 class GenreTile extends StatelessWidget {
   final Genre genre;
@@ -101,25 +102,9 @@ class GenreTile extends StatelessWidget {
                 ],
               ),
             ),
-
-            // Edit icon button
-            Container(
-              width: 34,
-              height: 34,
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.06),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                  color: Colors.white.withOpacity(0.10),
-                  width: 0.5,
-                ),
-              ),
-              child: Icon(
-                Icons.edit_outlined,
-                size: 16,
-                color: const Color(0xFFF0ECE4).withOpacity(0.45),
-              ),
-            ),
+            const ModelWidgetTile(icon: Icons.edit_outlined, borderColor: Colors.white, IconColor: Color(0xFFF0ECE4)),
+            const SizedBox(width: 10,),
+            const ModelWidgetTile(icon: Icons.delete_outline, borderColor: Colors.red, IconColor: Colors.red)
           ],
         ),
       ),

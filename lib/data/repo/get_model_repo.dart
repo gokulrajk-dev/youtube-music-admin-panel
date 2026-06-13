@@ -1,6 +1,8 @@
-import 'package:basic_fundamental/network/ApiEndpoint.dart';
-import 'package:basic_fundamental/network/Dio_pri_client.dart';
+
 import 'package:dio/dio.dart';
+
+import '../../core/network/ApiEndpoint.dart';
+import '../../core/network/Dio_pri_client.dart';
 
 class GetModelCrud {
   final dio = DioPrivateClient().dio;
