@@ -7,18 +7,19 @@ final artistForm = [
     type: FieldType.text,
     required: true,
   ),
-
   const FormFieldConfig(
     name: "artist_bio",
     label: "Biography",
     type: FieldType.multiline,
   ),
-
   const FormFieldConfig(
     name: "country",
     label: "Country",
     type: FieldType.text,
   ),
-
-//   todo artist image
+  const FormFieldConfig(
+      name: "artist_image",
+      label: "Artist image",
+      type: FieldType.image,
+      required: true),
 ];

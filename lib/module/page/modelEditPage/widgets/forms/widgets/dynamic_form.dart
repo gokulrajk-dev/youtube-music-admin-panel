@@ -1,10 +1,9 @@
 import 'dart:io';
 
-import 'package:basic_fundamental/core/network/ApiEndpoint.dart';
-import 'package:dio/src/response.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../../../core/network/ApiEndpoint.dart';
 import '../../../controller/modelEditPageController.dart';
 import '../config/form_field_config.dart';
 
@@ -36,35 +35,44 @@ class _DynamicFormPageState extends State<DynamicFormPage> {
       controller[field.name] = TextEditingController();
       focusNode[field.name] = FocusNode();
     }
+    GetListModel(widget.title);
+  }
+
+  Future<void> GetListModel(String title) async {
+    switch (title) {
+      case "Album":
+        await formController.getArtistDetails();
+        print(" album artist :${formController.artistList.length}");
+    }
   }
 
   Future<void> _saveForm(final photo) async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-    if (photo && widget.title!="Genre") {
+    if (photo && widget.title != "Genre") {
       Get.snackbar(
         "Failed",
         "pls add the Artist photo",
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
+      return;
     }
 
-    dynamicFormDataPost(widget.title);
-      Get.back();
-      Get.snackbar(
-        "Success",
-        "Saved successfully",
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
-
+    await dynamicFormDataPost(widget.title);
+    Get.back();
+    Get.snackbar(
+      "Success",
+      "Saved successfully",
+      backgroundColor: Colors.green,
+      colorText: Colors.white,
+    );
   }
 
   Future<dynamic> dynamicFormDataPost(String title) async {
-    if(title.isEmpty) return;
-    switch (title){
+    if (title.isEmpty) return;
+    switch (title) {
       case "Artist":
         return await formController.submit(
           endpoint: ApiEndpoint.artist,
@@ -83,6 +91,18 @@ class _DynamicFormPageState extends State<DynamicFormPage> {
             "description": controller['description']!.text,
           },
         );
+      case "Album":
+         final result = await formController.submit(
+          endpoint: ApiEndpoint.get_album_song,
+          data: {
+            "title": controller["title"]!.text,
+            "cover_image": formController.selectedImage.value,
+            // "release_date": controller["release_date"]!.text,
+            "artist_id": formController.artist_id,
+            "description": controller["description"]!.text
+          },
+        );
+         print("result :$result");
     }
   }
 
@@ -94,7 +114,7 @@ class _DynamicFormPageState extends State<DynamicFormPage> {
     for (var node in focusNode.values) {
       node.dispose();
     }
-    formController.selectedImage.value=null;
+    formController.selectedImage.value = null;
     super.dispose();
   }
 
@@ -119,24 +139,19 @@ class _DynamicFormPageState extends State<DynamicFormPage> {
                   .entries
                   .map((e) => _buildField(e.value, e.key)),
               const SizedBox(height: 12),
-              if(widget.title !="Genre")
-              const imagePicker(),
-              const SizedBox(height: 32),
               ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF7C3AED),
-                    minimumSize: const Size(double.infinity, 54),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14)),
-                  ),
-                  onPressed: () async {
-                    await _saveForm(formController.selectedImage.value ==null);
-                  },
-                  child: Text("Save ${widget.title}",
-                      style:
-                          const TextStyle(color: Colors.white, fontSize: 16)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF7C3AED),
+                  minimumSize: const Size(double.infinity, 54),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14)),
                 ),
-
+                onPressed: () async {
+                  await _saveForm(formController.selectedImage.value == null);
+                },
+                child: Text("Save ${widget.title}",
+                    style: const TextStyle(color: Colors.white, fontSize: 16)),
+              ),
             ],
           ),
         ),
@@ -145,6 +160,22 @@ class _DynamicFormPageState extends State<DynamicFormPage> {
   }
 
   Widget _buildField(FormFieldConfig field, int index) {
+    switch (field.type) {
+      case FieldType.text:
+      case FieldType.multiline:
+        return _buildTextField(field, index);
+      case FieldType.number:
+        return const SizedBox();
+      case FieldType.multipleSelection:
+        return _buildMultipleSelect(field);
+      case FieldType.image:
+        return _buildImagePicker();
+      case FieldType.date:
+        return const SizedBox();
+    }
+  }
+
+  Widget _buildTextField(FormFieldConfig field, int index) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: TextFormField(
@@ -185,69 +216,128 @@ class _DynamicFormPageState extends State<DynamicFormPage> {
       ),
     );
   }
-}
 
-class imagePicker extends StatefulWidget {
-  const imagePicker({super.key});
-
-  @override
-  State<imagePicker> createState() => _imagePickerState();
-}
-
-class _imagePickerState extends State<imagePicker> {
-  final GetModelEditController _controller = Get.find();
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () async {
-        await _controller.imagePickers();
-      },
+  Widget _buildMultipleSelect(FormFieldConfig field) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        height: 200,
-        width: double.infinity,
+        clipBehavior: Clip.hardEdge,
+        height: 300,
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.08),
+          color: Colors.white.withOpacity(0.04),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withOpacity(0.08),
+            width: 0.5,
           ),
         ),
-        child: Obx(
-          () {
-            if (_controller.selectedImage.value== null) {
-              return const Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.photo,
-                    size: 100,
-                    color: Colors.white,
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    "Click To Select Image",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                    ),
-                  ),
-                ],
-              );
-            }
-
-            return ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: Image.file(
-                _controller.selectedImage.value as File,
-                fit: BoxFit.cover,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                field.label.toUpperCase(),
+                style: const TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 1.2,
+                  color: Color(0x4DF0ECE4),
+                ),
               ),
-            );
-          },
+            ),
+            Expanded(
+              child: Obx(
+                () => ListView.builder(
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: formController.artistList.length,
+                  itemBuilder: (context, index) {
+                    print(" album artist :${formController.artistList.length}");
+                    final artist = formController.artistList[index];
+                    final artist_id = formController.artist_id;
+                    return CheckboxListTile(
+                      title: Text(
+                        artist.artistName ?? "",
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      value: formController.artist_id.contains(artist.id),
+                      onChanged: (value) {
+                        setState(() {
+                          if (value!) {
+                            if (!artist_id.contains(artist.id)) {
+                              artist_id.add(artist.id);
+                            }
+                          } else {
+                            artist_id.remove(artist.id);
+                          }
+                        });
+
+                      },
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
-}
 
+  Widget _buildImagePicker() {
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: () async {
+            await formController.imagePickers();
+          },
+          child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 6),
+            height: 200,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.1),
+              ),
+            ),
+            child: Obx(
+              () {
+                if (formController.selectedImage.value == null) {
+                  return const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.photo,
+                        size: 100,
+                        color: Colors.white,
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        "Click To Select Image",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
+                  );
+                }
+
+                return ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.file(
+                    formController.selectedImage.value as File,
+                    fit: BoxFit.cover,
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}

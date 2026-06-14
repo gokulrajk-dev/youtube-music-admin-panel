@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:basic_fundamental/core/base/base_class.dart';
+import 'package:basic_fundamental/core/network/ApiEndpoint.dart';
+import 'package:basic_fundamental/data/data_model/artist.dart';
 import 'package:basic_fundamental/module/page/modelEditPage/widgets/forms/definitions/album_form.dart';
 import 'package:basic_fundamental/module/page/modelEditPage/widgets/forms/definitions/artist_form.dart';
 import 'package:dio/dio.dart' as dio;
@@ -23,17 +25,31 @@ class GetModelEditController extends base_controller {
   OverlayEntry? overlayEntry;
   Rxn<File> selectedImage = Rxn<File>();
   final dio.Dio dioClient = DioPrivateClient().dio;
+  final RxList<Artist> artistList = <Artist>[].obs;
+  final RxList<int> artist_id = <int>[].obs;
+  Future<void> getArtistDetails() async {
+    try {
+      final result = await dynamicApi().getFunction(
+        ApiEndpoint.artist,
+        Artist.fromJson,
+      );
 
+      artistList.assignAll(
+        result.cast<Artist>(),
+      );
+
+    } catch (e) {
+      print(e);
+    }
+  }
   Future<dio.Response?> submit({
     required String endpoint,
     required Map<String, dynamic> data,
   }) async {
     try {
       dio.FormData formData = dio.FormData();
-
       for (var entry in data.entries) {
         if (entry.value == null) continue;
-
         if (entry.value is File) {
           formData.files.add(
             MapEntry(
@@ -53,20 +69,17 @@ class GetModelEditController extends base_controller {
         }
       }
 
+      print(formData.fields);
+
       dio.Response response = await dioClient.post(
         endpoint,
         data: formData,
       );
 
-      print(response.statusCode);
-      print(response.data);
-
       return response;
     } on dio.DioException catch (e) {
-      print("Error type: ${e.type}");
-      print("Message: ${e.message}");
-      print("Error: ${e.error}");
-      print("Response: ${e.response?.data}");
+      print(e.response?.statusCode);
+      print(e.response?.data);
       return null;
     }
   }
@@ -92,30 +105,6 @@ class GetModelEditController extends base_controller {
       set_loading(false);
     }
   }
-
-  // it suppose to be in the network file
-
-  // Future<Response?> dynamicPostForm(
-  //     {required String endpoint, required Map<String, dynamic> data}) async
-  // {
-  //   try {
-  //     FormData formData = FormData();
-  //
-  //     for (var entry in data.entries) {
-  //       if (entry.value == null) continue;
-  //       if (entry.value is File) {
-  //         formData.files.add(
-  //           MapEntry(
-  //             entry.key,
-  //             await MultipartFile.fromFile(
-  //               entry.value.path,
-  //             ),
-  //           ),
-  //         );
-  //       }
-  //     }
-  //   } catch (e) {}
-  // }
 
   Future<void> loadDetailData(
       ModelDetailDefinition definition, dynamic item) async {
@@ -257,4 +246,3 @@ class GetModelEditController extends base_controller {
     );
   }
 }
-

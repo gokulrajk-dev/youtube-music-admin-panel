@@ -23,7 +23,7 @@ final songForm = [
   const FormFieldConfig(
     name: "release_date",
     label: "Release Date",
-    type: FieldType.date,
+    type: FieldType.text,
     required: true
   ),
 
@@ -48,7 +48,13 @@ final songForm = [
     required: true
   ),
 
-  //   todo song image
+  const FormFieldConfig(
+      name: "cover_image",
+      label: "Image",
+      type: FieldType.image,
+      required: true
+  ),
+
 
 
 

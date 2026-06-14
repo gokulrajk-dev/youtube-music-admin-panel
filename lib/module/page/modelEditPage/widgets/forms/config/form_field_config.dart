@@ -2,7 +2,7 @@ enum FieldType {
   text,
   multiline,
   number,
-  dropdown,
+  multipleSelection,
   image,
   date,
 }

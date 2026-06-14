@@ -95,9 +95,9 @@ class SongTile extends StatelessWidget {
               ),
             ),
 
-            const ModelWidgetTile(icon: Icons.edit_outlined, borderColor: Colors.white, IconColor: Color(0xFFF0ECE4)),
+            const ListModelTile(icon: Icons.edit_outlined, borderColor: Colors.white, IconColor: Color(0xFFF0ECE4)),
             const SizedBox(width: 10,),
-            const ModelWidgetTile(icon: Icons.delete_outline, borderColor: Colors.red, IconColor: Colors.red)
+            const ListModelTile(icon: Icons.delete_outline, borderColor: Colors.red, IconColor: Colors.red)
           ],
         ),
       ),
