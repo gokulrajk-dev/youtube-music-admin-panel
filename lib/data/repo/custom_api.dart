@@ -9,6 +9,7 @@ class dynamicApi<mod> {
 
   Future<List<mod>> getFunction(String api, mod Function(Map<String, dynamic>) fromJson) async {
     final response = await dio.get(api);
+    print("song ${response.data}");
     return (response.data as List).map((e) => fromJson(e)).toList();
   }
 

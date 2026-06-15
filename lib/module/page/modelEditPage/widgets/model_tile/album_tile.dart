@@ -1,9 +1,13 @@
+import 'package:basic_fundamental/module/page/modelEditPage/widgets/forms/definitions/album_form.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../../../../../data/data_model/album_module.dart';
 import '../../../../../data/registry/model_registry.dart';
 import '../../../../../data/registry/model_type.dart';
 import '../../view/modelDetailPageViews.dart';
+import '../forms/widgets/dynamic_form.dart';
+import '../helperwidget/commanWidgets.dart';
 import '../helperwidget/helper_widget.dart';
 
 class AlbumTile extends StatelessWidget {
@@ -21,7 +25,7 @@ class AlbumTile extends StatelessWidget {
         const modelType = ModelType.album;
         final definition = ModelRegistry.modelsDetails[modelType]!;
         Get.to(
-              () => ModelDetailsEditView(
+          () => ModelDetailsEditView(
             definitions: definition,
             item: album,
           ),
@@ -54,15 +58,26 @@ class AlbumTile extends StatelessWidget {
               ),
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(14),
-                  child: album.coverImage != null &&
-                      album.coverImage!.isNotEmpty
-                      ? Image.network(
-                    album.coverImage!,
-                    fit: BoxFit.cover,
-
-                  )
-                      :Image.asset('assets/_joker1.png',fit: BoxFit.cover,)
-              ),
+                  child:
+                      album.coverImage != null && album.coverImage!.isNotEmpty
+                          ? GestureDetector(
+                              onTap: () {
+                                Get.dialog(
+                                  ModelImage(
+                                    image: album.coverImage!,
+                                  ),
+                                  barrierColor: Colors.transparent,
+                                );
+                              },
+                              child: Image.network(
+                                album.coverImage!,
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                          : Image.asset(
+                              'assets/_joker1.png',
+                              fit: BoxFit.cover,
+                            )),
             ),
 
             const SizedBox(width: 14),
@@ -84,7 +99,7 @@ class AlbumTile extends StatelessWidget {
                   ),
                   const SizedBox(height: 3),
                   Text(
-                    album.artists!.map((e)=>e.artistName).join(','),
+                    album.artists!.map((e) => e.artistName).join(','),
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w300,
@@ -96,9 +111,27 @@ class AlbumTile extends StatelessWidget {
             ),
 
             // Edit icon button
-            const ListModelTile(icon: Icons.edit_outlined, borderColor: Colors.white, IconColor: Color(0xFFF0ECE4)),
-            const SizedBox(width: 10,),
-            const ListModelTile(icon: Icons.delete_outline, borderColor: Colors.red, IconColor: Colors.red)
+            ListModelTile(
+              icon: Icons.edit_outlined,
+              borderColor: Colors.white,
+              IconColor: Color(0xFFF0ECE4),
+              onTap: () {
+                Get.to(DynamicFormPage(
+                  title: "Album",
+                  fields: AlbumForm,
+                  model: album,
+                ));
+              },
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            ListModelTile(
+              icon: Icons.delete_outline,
+              borderColor: Colors.red,
+              IconColor: Colors.red,
+              onTap: () {},
+            )
           ],
         ),
       ),

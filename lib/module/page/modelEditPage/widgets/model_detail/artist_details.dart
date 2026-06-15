@@ -6,6 +6,7 @@ import '../../../../../data/data_model/Artist.dart';
 import '../../controller/modelEditPageController.dart';
 import '../forms/definitions/artist_form.dart';
 import '../forms/widgets/dynamic_form.dart';
+import '../helperwidget/commanWidgets.dart';
 import '../helperwidget/helper_widget.dart';
 
 class ArtistDetail extends StatelessWidget {
@@ -79,18 +80,28 @@ class ArtistDetail extends StatelessWidget {
                               shape: BoxShape.circle,
                               color: Color(0xFF0A0A0F),
                             ),
-                            child: ClipOval(
-                              child: (artist.artistImage != null &&
-                                      artist.artistImage!.isNotEmpty)
-                                  ? Image.network(
-                                      artist.artistImage!,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (_, __, ___) =>
-                                          _AvatarFallback(
-                                              name: artist.artistName ?? ''),
-                                    )
-                                  : _AvatarFallback(
-                                      name: artist.artistName ?? ''),
+                            child: GestureDetector(
+                              onTap:() {
+                                Get.dialog(
+                                  ModelImage(
+                                    image: artist.artistImage!,
+                                  ),
+                                  barrierColor: Colors.transparent,
+                                );
+                              } ,
+                              child: ClipOval(
+                                child: (artist.artistImage != null &&
+                                        artist.artistImage!.isNotEmpty)
+                                    ? Image.network(
+                                        artist.artistImage!,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (_, __, ___) =>
+                                            _AvatarFallback(
+                                                name: artist.artistName ?? ''),
+                                      )
+                                    : _AvatarFallback(
+                                        name: artist.artistName ?? ''),
+                              ),
                             ),
                           ),
                         ),
@@ -277,7 +288,13 @@ class ArtistDetail extends StatelessWidget {
                               // Update Button
                               Expanded(
                                 child: GestureDetector(
-                                  onTap: () {},
+                                  onTap: () {
+                                    Get.to(DynamicFormPage(
+                                      title: "Artist",
+                                      fields: artistForm,
+                                      model: artist,
+                                    ));
+                                  },
                                   child: Container(
                                     height: 52,
                                     decoration: BoxDecoration(

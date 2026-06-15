@@ -45,7 +45,8 @@ class GetModelEditController extends base_controller {
   Future<dio.Response?> submit({
     required String endpoint,
     required Map<String, dynamic> data,
-  }) async {
+  }) async
+  {
     try {
       dio.FormData formData = dio.FormData();
       for (var entry in data.entries) {
@@ -59,6 +60,15 @@ class GetModelEditController extends base_controller {
               ),
             ),
           );
+        } else if (entry.value is List) {
+          for (var item in entry.value) {
+            formData.fields.add(
+              MapEntry(
+                entry.key,
+                item.toString(),
+              ),
+            );
+          }
         } else {
           formData.fields.add(
             MapEntry(
@@ -69,9 +79,56 @@ class GetModelEditController extends base_controller {
         }
       }
 
-      print(formData.fields);
-
       dio.Response response = await dioClient.post(
+        endpoint,
+        data: formData,
+      );
+
+      return response;
+    } on dio.DioException catch (e) {
+      print(e.response?.statusCode);
+      print(e.response?.data);
+      return null;
+    }
+  }
+  Future<dio.Response?> updated({
+    required String endpoint,
+    required Map<String, dynamic> data,
+  }) async
+  {
+    try {
+      dio.FormData formData = dio.FormData();
+      for (var entry in data.entries) {
+        if (entry.value == null) continue;
+        if (entry.value is File) {
+          formData.files.add(
+            MapEntry(
+              entry.key,
+              await dio.MultipartFile.fromFile(
+                entry.value.path,
+              ),
+            ),
+          );
+        } else if (entry.value is List) {
+          for (var item in entry.value) {
+            formData.fields.add(
+              MapEntry(
+                entry.key,
+                item.toString(),
+              ),
+            );
+          }
+        } else {
+          formData.fields.add(
+            MapEntry(
+              entry.key,
+              entry.value.toString(),
+            ),
+          );
+        }
+      }
+
+      dio.Response response = await dioClient.put(
         endpoint,
         data: formData,
       );

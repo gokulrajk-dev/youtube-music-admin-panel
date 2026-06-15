@@ -11,7 +11,7 @@ final AlbumForm = [
   const FormFieldConfig(
     name: "release_date",
     label: "Release Date",
-    type: FieldType.text,
+    type: FieldType.date,
   ),
   const FormFieldConfig(
       name: "artist_id",

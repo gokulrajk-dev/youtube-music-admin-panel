@@ -7,7 +7,6 @@ class ApiEndpoint {
   static const refresh_token = '/user_accounts/auth/token/refresh/';
   static const get_current_user = "/user_accounts/get_staff/";
   static const get_song = '/songs_app/Song_views/';
-  static const get_current_id_song = '/songs_app/Song_views/';
   static const get_like_song = '/songs_app/like_views/';
   static const post_del_user_like_song = '/songs_app/like_and_unlike_views/';
   static const get_current_user_playlist = '/songs_app/playlist_views/';
@@ -30,7 +29,7 @@ class ApiEndpoint {
   }
 
   static String get_modity_current_song_id(int CurrentSongId) {
-    return '${get_current_id_song}$CurrentSongId/';
+    return '${get_song}$CurrentSongId/';
   }
 
   static String get_current_user_pic_playlist(int pickPlaylistId) {

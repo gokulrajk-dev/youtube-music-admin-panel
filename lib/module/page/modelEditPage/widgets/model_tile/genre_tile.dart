@@ -1,3 +1,4 @@
+import 'package:basic_fundamental/module/page/modelEditPage/widgets/forms/definitions/genre_form.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -5,6 +6,7 @@ import '../../../../../data/data_model/genre.dart';
 import '../../../../../data/registry/model_registry.dart';
 import '../../../../../data/registry/model_type.dart';
 import '../../view/modelDetailPageViews.dart';
+import '../forms/widgets/dynamic_form.dart';
 import '../helperwidget/helper_widget.dart';
 
 class GenreTile extends StatelessWidget {
@@ -102,9 +104,16 @@ class GenreTile extends StatelessWidget {
                 ],
               ),
             ),
-            const ListModelTile(icon: Icons.edit_outlined, borderColor: Colors.white, IconColor: Color(0xFFF0ECE4)),
+            ListModelTile(icon: Icons.edit_outlined, borderColor: Colors.white, IconColor: const Color(0xFFF0ECE4), onTap: () {
+              Get.to(DynamicFormPage(
+                title: "Genre",
+                fields: GenreForm,
+                model: genre,
+              )
+              );
+            },),
             const SizedBox(width: 10,),
-            const ListModelTile(icon: Icons.delete_outline, borderColor: Colors.red, IconColor: Colors.red)
+            ListModelTile(icon: Icons.delete_outline, borderColor: Colors.red, IconColor: Colors.red, onTap: () {  },)
           ],
         ),
       ),

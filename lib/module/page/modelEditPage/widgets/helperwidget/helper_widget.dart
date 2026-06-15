@@ -68,29 +68,33 @@ class CircleIconButton extends StatelessWidget {
 
 // this is design for List
 class ListModelTile extends StatelessWidget {
+  final VoidCallback onTap;
   final IconData icon;
   final Color borderColor;
   final Color IconColor;
-  const ListModelTile({super.key, required this.icon, required this.borderColor, required this.IconColor});
+  const ListModelTile({super.key, required this.icon, required this.borderColor, required this.IconColor, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return  Container(
-      width: 34,
-      height: 34,
-      decoration: BoxDecoration(
-        color: borderColor.withOpacity(0.06),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: borderColor.withOpacity(0.10),
-          width: 0.5,
+    return  GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 34,
+        height: 34,
+        decoration: BoxDecoration(
+          color: borderColor.withOpacity(0.06),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: borderColor.withOpacity(0.10),
+            width: 0.5,
+          ),
         ),
-      ),
-      child: Icon(
-        icon,
-        size: 16,
-        // color: const Color(0xFFF0ECE4).withOpacity(0.45),
-        color: IconColor.withOpacity(0.45),
+        child: Icon(
+          icon,
+          size: 16,
+          // color: const Color(0xFFF0ECE4).withOpacity(0.45),
+          color: IconColor.withOpacity(0.45),
+        ),
       ),
     );
   }

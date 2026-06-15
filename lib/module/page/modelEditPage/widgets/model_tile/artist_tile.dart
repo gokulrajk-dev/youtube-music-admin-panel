@@ -6,6 +6,9 @@ import 'package:get/get.dart';
 import '../../../../../data/data_model/Artist.dart';
 import '../../../../../data/registry/model_registry.dart';
 import '../../../../../data/registry/model_type.dart';
+import '../forms/definitions/artist_form.dart';
+import '../forms/widgets/dynamic_form.dart';
+import '../helperwidget/commanWidgets.dart';
 
 class ArtistTile extends StatelessWidget {
   final Artist artist;
@@ -56,10 +59,22 @@ class ArtistTile extends StatelessWidget {
               child: ClipRRect(
                   child: artist.artistImage != null &&
                           artist.artistImage!.isNotEmpty
-                      ? Image.network(
-                          artist.artistImage!,
-                          fit: BoxFit.cover,
-                        )
+                      ? Builder(builder: (context) {
+                          return GestureDetector(
+                            onTap: () {
+                                Get.dialog(
+                                  ModelImage(
+                                    image: artist.artistImage!,
+                                  ),
+                                  barrierColor: Colors.transparent,
+                                );
+                            },
+                            child: Image.network(
+                              artist.artistImage!,
+                              fit: BoxFit.cover,
+                            ),
+                          );
+                        })
                       : Image.asset(
                           'assets/_joker1.png',
                           fit: BoxFit.cover,
@@ -93,9 +108,26 @@ class ArtistTile extends StatelessWidget {
                 ],
               ),
             ),
-            const ListModelTile(icon: Icons.edit_outlined, borderColor: Colors.white, IconColor: Color(0xFFF0ECE4)),
-            const SizedBox(width: 10,),
-            const ListModelTile(icon: Icons.delete_outline, borderColor: Colors.red, IconColor: Colors.red)
+            ListModelTile(
+                icon: Icons.edit_outlined,
+                borderColor: Colors.white,
+                IconColor: const Color(0xFFF0ECE4),
+                onTap: () {
+                  Get.to(DynamicFormPage(
+                    title: "Artist",
+                    fields: artistForm,
+                    model: artist,
+                  ));
+                }),
+            const SizedBox(
+              width: 10,
+            ),
+            ListModelTile(
+              icon: Icons.delete_outline,
+              borderColor: Colors.red,
+              IconColor: Colors.red,
+              onTap: () {},
+            )
           ],
         ),
       ),

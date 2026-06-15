@@ -1,7 +1,10 @@
 import 'package:basic_fundamental/module/page/modelEditPage/widgets/helperwidget/helper_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../../../data/data_model/genre.dart';
+import '../forms/definitions/genre_form.dart';
+import '../forms/widgets/dynamic_form.dart';
 import '../helperwidget/ListOfModel.dart';
 
 class GenreDetails extends StatelessWidget {
@@ -255,7 +258,12 @@ class GenreDetails extends StatelessWidget {
                             Expanded(
                               child: GestureDetector(
                                 onTap: () {
-                                  // TODO: navigate to edit screen
+                                  Get.to(DynamicFormPage(
+                                    title: "Genre",
+                                    fields: GenreForm,
+                                    model: genre,
+                                  )
+                                  );
                                 },
                                 child: Container(
                                   height: 52,
