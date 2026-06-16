@@ -262,8 +262,7 @@ class GenreDetails extends StatelessWidget {
                                     title: "Genre",
                                     fields: GenreForm,
                                     model: genre,
-                                  )
-                                  );
+                                  ));
                                 },
                                 child: Container(
                                   height: 52,

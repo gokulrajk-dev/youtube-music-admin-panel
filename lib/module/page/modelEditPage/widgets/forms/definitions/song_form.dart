@@ -20,42 +20,38 @@ final songForm = [
     type: FieldType.text,
     required: true
   ),
+
   const FormFieldConfig(
     name: "release_date",
     label: "Release Date",
-    type: FieldType.text,
+    type: FieldType.date,
     required: true
   ),
 
   const FormFieldConfig(
     name: "artist_id",
     label: "Artist",
-    type: FieldType.text,
+    type: FieldType.multipleArtistSelection,
     required: true
   ),
 
   const FormFieldConfig(
     name: "genre_id",
     label: "Genre",
-    type: FieldType.text,
+    type: FieldType.multipleGenreSelection,
     required: true
   ),
 
   const FormFieldConfig(
     name: "album_id",
     label: "Album",
-    type: FieldType.text,
+    type: FieldType.multipleAlbumSelection,
     required: true
   ),
-
   const FormFieldConfig(
       name: "cover_image",
       label: "Image",
       type: FieldType.image,
       required: true
   ),
-
-
-
-
 ];

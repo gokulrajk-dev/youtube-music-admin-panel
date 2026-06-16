@@ -97,7 +97,7 @@ class SongTile extends StatelessWidget {
                   ),
                   const SizedBox(height: 3),
                   Text(
-                    song.artist!.map((e)=>e.artistName).join(','),
+                    song.artist?.map((e) => e.artistName).join(',') ?? 'Unknown Artist',
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w300,

@@ -2,7 +2,9 @@ enum FieldType {
   text,
   multiline,
   number,
-  multipleSelection,
+  multipleArtistSelection,
+  multipleGenreSelection,
+  multipleAlbumSelection,
   image,
   date,
 }

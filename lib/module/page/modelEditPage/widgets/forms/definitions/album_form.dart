@@ -16,7 +16,7 @@ final AlbumForm = [
   const FormFieldConfig(
       name: "artist_id",
       label: "artist id",
-      type: FieldType.multipleSelection,
+      type: FieldType.multipleArtistSelection,
       required: true),
   const FormFieldConfig(
     name: "cover_image",

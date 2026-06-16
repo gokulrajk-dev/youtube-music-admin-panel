@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:basic_fundamental/core/base/base_class.dart';
 import 'package:basic_fundamental/core/network/ApiEndpoint.dart';
+import 'package:basic_fundamental/data/data_model/album_module.dart';
 import 'package:basic_fundamental/data/data_model/artist.dart';
+import 'package:basic_fundamental/data/data_model/genre.dart';
 import 'package:basic_fundamental/module/page/modelEditPage/widgets/forms/definitions/album_form.dart';
 import 'package:basic_fundamental/module/page/modelEditPage/widgets/forms/definitions/artist_form.dart';
 import 'package:dio/dio.dart' as dio;
@@ -25,9 +27,29 @@ class GetModelEditController extends base_controller {
   OverlayEntry? overlayEntry;
   Rxn<File> selectedImage = Rxn<File>();
   final dio.Dio dioClient = DioPrivateClient().dio;
+  final RxList<Genre> GenreList = <Genre>[].obs;
+  final RxList<int> genre_id = <int>[].obs;
   final RxList<Artist> artistList = <Artist>[].obs;
   final RxList<int> artist_id = <int>[].obs;
-  Future<void> getArtistDetails() async {
+  final RxList<Album> albumList = <Album>[].obs;
+  final  album_id = 1.obs;
+
+
+  Future<void> getGenreDetails() async {
+    try {
+      final result = await dynamicApi().getFunction(
+        ApiEndpoint.genre,
+        Genre.fromJson,
+      );
+
+      GenreList.assignAll(
+        result.cast<Genre>(),
+      );
+
+    } catch (e) {
+      print(e);
+    }
+  } Future<void> getArtistDetails() async {
     try {
       final result = await dynamicApi().getFunction(
         ApiEndpoint.artist,
@@ -41,7 +63,21 @@ class GetModelEditController extends base_controller {
     } catch (e) {
       print(e);
     }
+  } Future<void> getAlbumDetails() async {
+    try {
+      final result = await dynamicApi().getFunction(
+        ApiEndpoint.get_album_song,
+        Album.fromJson,
+      );
+
+      albumList.assignAll(
+        result.cast<Album>(),
+      );
+    } catch (e) {
+      print(e);
+    }
   }
+
   Future<dio.Response?> submit({
     required String endpoint,
     required Map<String, dynamic> data,
@@ -303,3 +339,4 @@ class GetModelEditController extends base_controller {
     );
   }
 }
+

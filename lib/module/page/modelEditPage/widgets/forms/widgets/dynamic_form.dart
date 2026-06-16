@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 
 import '../../../../../../core/network/ApiEndpoint.dart';
 import '../../../../../../data/data_model/Artist.dart';
+import '../../../../../../data/data_model/song_module.dart';
 import '../../../controller/modelEditPageController.dart';
 import '../config/form_field_config.dart';
 
@@ -47,15 +48,33 @@ class _DynamicFormPageState extends State<DynamicFormPage> {
     GetListModel(widget.title);
     if (editing) {
       updateListModel(widget.title);
-      save_update ='Update';
+      save_update = 'Update';
     }
+  }
+
+  @override
+  void dispose() {
+    for (var controllers in controller.values) {
+      controllers.dispose();
+    }
+    for (var node in focusNode.values) {
+      node.dispose();
+    }
+    formController.selectedImage.value = null;
+    formController.artist_id.value = [];
+    formController.genre_id.value = [];
+    formController.album_id.value= 0;
+    super.dispose();
   }
 
   Future<void> GetListModel(String title) async {
     switch (title) {
       case "Album":
         await formController.getArtistDetails();
-        print(" album artist :${formController.artistList.length}");
+      case "Song":
+        await formController.getArtistDetails();
+        await formController.getAlbumDetails();
+        await formController.getGenreDetails();
     }
   }
 
@@ -87,6 +106,20 @@ class _DynamicFormPageState extends State<DynamicFormPage> {
           formController.artist_id.add(artistId);
         }
         return;
+      case "Song":
+        final song = widget.model as Song;
+        controller["title"]!.text = song.title!;
+        model_img = song.coverImage!;
+        controller["release_date"]!.text = song.releaseDate!;
+        controller["lyrics"]!.text = song.lyrics!;
+        controller["language"]!.text = song.language!;
+        for (var artistId in song.artist!.map((e) => e.id)) {
+          formController.artist_id.add(artistId);
+        }
+        for (var genreId in song.genre!.map((e) => e.id)) {
+          formController.genre_id.add(genreId);
+        }
+        formController.album_id.value = song.album!.id;
     }
   }
 
@@ -219,20 +252,59 @@ class _DynamicFormPageState extends State<DynamicFormPage> {
           }
         }
         return;
-    }
-  }
+      case "Song":
+        if (editing) {
+          final song = widget.model as Song;
+          final response = await formController.updated(
+            endpoint: ApiEndpoint.get_modity_current_song_id(song.id),
+            data: {
+              "title": controller["title"]!.text,
+              "cover_image": formController.selectedImage.value,
+              "release_date": controller["release_date"]!.text,
+              "lyrics": controller["lyrics"]!.text,
+              "language": controller["language"]!.text,
+              "artist_id": formController.artist_id,
+              "genre_id": formController.genre_id,
+              "album_id": formController.album_id.value,
+              // "duration": song.duration,
+              // "views": song.views,
+              // "likes_count": song.likesCount,
+              // "stream": song.stream
+            },
+          );
 
-  @override
-  void dispose() {
-    for (var controllers in controller.values) {
-      controllers.dispose();
+          if (response != null) {
+            print("update song: ${response.data}");
+            final updated = Song.fromJson(response.data);
+            final index = formController.items
+                .indexWhere((e) => (e as Song).id == updated.id);
+            if (index != -1) formController.items[index] = updated;
+          }
+        } else {
+          final response = await formController.submit(
+            endpoint: ApiEndpoint.get_song,
+            data: {
+              "title": controller["title"]!.text,
+              "cover_image": formController.selectedImage.value,
+              "release_date": controller["release_date"]!.text,
+              "lyrics": controller["lyrics"]!.text,
+              "language": controller["language"]!.text,
+              "artist_id": formController.artist_id,
+              "genre_id": formController.genre_id,
+              "album_id": formController.album_id.value,
+              // "duration": "00:00:00",
+              // "views": 0,
+              // "likes_count": 0,
+              // "stream": []
+            },
+          );
+          if (response != null) {
+
+            final song = Song.fromJson(response.data);
+            formController.items.add(song);
+          }
+        }
     }
-    for (var node in focusNode.values) {
-      node.dispose();
-    }
-    formController.selectedImage.value = null;
-    formController.artist_id.value=[];
-    super.dispose();
   }
 
   @override
@@ -266,9 +338,8 @@ class _DynamicFormPageState extends State<DynamicFormPage> {
                 onPressed: () async {
                   await _saveForm(formController.selectedImage.value == null);
                 },
-                child:Text("$save_update ${widget.title}",
-                        style:
-                            const TextStyle(color: Colors.white, fontSize: 16)),
+                child: Text("$save_update ${widget.title}",
+                    style: const TextStyle(color: Colors.white, fontSize: 16)),
               ),
             ],
           ),
@@ -284,12 +355,16 @@ class _DynamicFormPageState extends State<DynamicFormPage> {
         return _buildTextField(field, index);
       case FieldType.number:
         return const SizedBox();
-      case FieldType.multipleSelection:
-        return _buildMultipleSelect(field);
+      case FieldType.multipleArtistSelection:
+        return _buildArtistMultipleSelect(field);
       case FieldType.image:
         return _buildImagePicker();
       case FieldType.date:
         return _buildDateTextField(field, index);
+      case FieldType.multipleGenreSelection:
+        return _buildGenreMultipleSelect(field);
+      case FieldType.multipleAlbumSelection:
+        return _buildAlbumMultipleSelect(field);
     }
   }
 
@@ -392,7 +467,157 @@ class _DynamicFormPageState extends State<DynamicFormPage> {
     );
   }
 
-  Widget _buildMultipleSelect(FormFieldConfig field) {
+  Widget _buildArtistMultipleSelect(FormFieldConfig field) {
+    return _buildListModel(
+        items: formController.artistList,
+        selectedIds: formController.artist_id,
+        getName: (artist) => artist.artistName ?? "",
+        getId: (artist) => artist.id,
+        field: field);
+  }
+
+  Widget _buildGenreMultipleSelect(FormFieldConfig field) {
+    return _buildListModel(
+      items: formController.GenreList,
+      selectedIds: formController.genre_id,
+      getName: (genre) => genre.genreName ?? "",
+      getId: (genre) => genre.id,
+      field: field,
+    );
+  }
+
+  Widget _buildAlbumMultipleSelect(FormFieldConfig field) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: Container(
+        clipBehavior: Clip.hardEdge,
+        height: 200,
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.04),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: Colors.white.withOpacity(0.08),
+            width: 0.5,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                field.label.toUpperCase(),
+                style: const TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 1.2,
+                  color: Color(0x4DF0ECE4),
+                ),
+              ),
+            ),
+            Expanded(
+              child: Obx(
+                () => ListView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: formController.albumList.length,
+                  itemBuilder: (context, index) {
+                    final album = formController.albumList[index];
+                    return RadioListTile<int>(
+                      title: Text(
+                        album.title ?? "",
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      value: album.id,
+                      groupValue: formController.album_id.value,
+                      onChanged: (value) {
+                        setState(() {
+                          formController.album_id.value = value!;
+                        });
+                        print("radio ${formController.album_id.value}");
+
+                      },
+                    );
+                  },
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImagePicker() {
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: () async {
+            await formController.imagePickers();
+          },
+          child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 6),
+            height: 200,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.1),
+              ),
+            ),
+            child: Obx(
+              () {
+                if (editing && formController.selectedImage.value == null) {
+                  return ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Image.network(
+                      model_img,
+                      fit: BoxFit.cover,
+                    ),
+                  );
+                }
+                if (formController.selectedImage.value == null) {
+                  return const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.photo,
+                        size: 100,
+                        color: Colors.white,
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        "Click To Select Image",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
+                  );
+                }
+                return ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.file(
+                    formController.selectedImage.value as File,
+                    fit: BoxFit.cover,
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildListModel<T>({
+    required RxList<T> items,
+    required RxList<int> selectedIds,
+    required String Function(T item) getName,
+    required int Function(T item) getId,
+    required FormFieldConfig field,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Container(
@@ -426,25 +651,23 @@ class _DynamicFormPageState extends State<DynamicFormPage> {
                 () => ListView.builder(
                   shrinkWrap: true,
                   physics: const BouncingScrollPhysics(),
-                  itemCount: formController.artistList.length,
+                  itemCount: items.length,
                   itemBuilder: (context, index) {
-                    print(" album artist :${formController.artistList.length}");
-                    final artist = formController.artistList[index];
-                    final artist_id = formController.artist_id;
+                    final item = items[index];
                     return CheckboxListTile(
                       title: Text(
-                        artist.artistName ?? "",
+                        getName(item),
                         style: const TextStyle(color: Colors.white),
                       ),
-                      value: formController.artist_id.contains(artist.id),
+                      value: selectedIds.contains(getId(item)),
                       onChanged: (value) {
                         setState(() {
-                          if (value!) {
-                            if (!artist_id.contains(artist.id)) {
-                              artist_id.add(artist.id);
+                          if (value == true) {
+                            if (!selectedIds.contains(getId(item))) {
+                              selectedIds.add(getId(item));
                             }
                           } else {
-                            artist_id.remove(artist.id);
+                            selectedIds.remove(getId(item));
                           }
                         });
                       },
@@ -456,70 +679,6 @@ class _DynamicFormPageState extends State<DynamicFormPage> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildImagePicker() {
-    return Column(
-      children: [
-        GestureDetector(
-          onTap: () async {
-            await formController.imagePickers();
-          },
-          child: Container(
-            margin: const EdgeInsets.symmetric(vertical: 6),
-            height: 200,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.08),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: Colors.white.withOpacity(0.1),
-              ),
-            ),
-            child: Obx(
-                    () {
-                      if(editing && formController.selectedImage.value==null){
-                        return  ClipRRect(
-                          borderRadius: BorderRadius.circular(16),
-                          child: Image.network(
-                            model_img,
-                            fit: BoxFit.cover,
-                          ),
-                        );
-                      }
-                      if (formController.selectedImage.value == null) {
-                        return const Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.photo,
-                              size: 100,
-                              color: Colors.white,
-                            ),
-                            SizedBox(height: 10),
-                            Text(
-                              "Click To Select Image",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                              ),
-                            ),
-                          ],
-                        );
-                      }
-                      return ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
-                        child: Image.file(
-                          formController.selectedImage.value as File,
-                          fit: BoxFit.cover,
-                        ),
-                      );
-                    },
-                  ),
-          ),
-        ),
-      ],
     );
   }
 }
