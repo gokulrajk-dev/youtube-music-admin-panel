@@ -1,9 +1,12 @@
 import 'dart:io';
 
+import 'package:basic_fundamental/data/data_model/MediaAssets.dart';
 import 'package:basic_fundamental/data/data_model/album_module.dart';
 import 'package:basic_fundamental/data/data_model/genre.dart';
+import 'package:basic_fundamental/module/page/modelEditPage/binding/modelEditPageBinding.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 
 import '../../../../../../core/network/ApiEndpoint.dart';
 import '../../../../../../data/data_model/Artist.dart';
@@ -63,7 +66,7 @@ class _DynamicFormPageState extends State<DynamicFormPage> {
     formController.selectedImage.value = null;
     formController.artist_id.value = [];
     formController.genre_id.value = [];
-    formController.album_id.value= 0;
+    formController.album_id.value = 0;
     super.dispose();
   }
 
@@ -75,6 +78,8 @@ class _DynamicFormPageState extends State<DynamicFormPage> {
         await formController.getArtistDetails();
         await formController.getAlbumDetails();
         await formController.getGenreDetails();
+      case "MediaAssets":
+        await formController.getSongDetails();
     }
   }
 
@@ -86,7 +91,6 @@ class _DynamicFormPageState extends State<DynamicFormPage> {
         controller['artist_bio']!.text = artist.artistBio!;
         model_img = artist.artistImage!;
         controller['country']!.text = artist.country!;
-
         return;
 
       case "Genre":
@@ -101,7 +105,6 @@ class _DynamicFormPageState extends State<DynamicFormPage> {
         controller['release_date']!.text = album.releaseDate ?? '';
         controller['description']!.text = album.description ?? '';
         model_img = album.coverImage!;
-        // Pre-select the artist checkbox
         for (var artistId in album.artists!.map((e) => e.id)) {
           formController.artist_id.add(artistId);
         }
@@ -120,6 +123,11 @@ class _DynamicFormPageState extends State<DynamicFormPage> {
           formController.genre_id.add(genreId);
         }
         formController.album_id.value = song.album!.id;
+
+      case "MediaAssets":
+        final media = widget.model as MediaAssets;
+        formController.song_id.value = media.song!.id;
+        formController.soundtrack.value = media.originalFile;
     }
   }
 
@@ -127,7 +135,7 @@ class _DynamicFormPageState extends State<DynamicFormPage> {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-    if (photo && widget.title != "Genre" && !editing) {
+    if (photo && widget.title != "Genre" && widget.title != "MediaAssets" && !editing) {
       Get.snackbar(
         "Failed",
         "pls add the Artist photo",
@@ -299,11 +307,41 @@ class _DynamicFormPageState extends State<DynamicFormPage> {
             },
           );
           if (response != null) {
-
             final song = Song.fromJson(response.data);
             formController.items.add(song);
           }
         }
+        return;
+      case "MediaAssets":
+        if (editing) {
+          final mediasong = widget.model as MediaAssets;
+          final response = await formController.updated(
+            endpoint: ApiEndpoint.Media_assets_rud(mediasong.id),
+            data: {
+              "song": formController.song_id.value,
+              "orginal_song": formController.soundtrack.value,
+            },
+          );
+          if (response != null) {
+            final updated = MediaAssets.fromJson(response.data);
+            final index = formController.items
+                .indexWhere((e) => (e as MediaAssets).id == updated.id);
+            if (index != -1) formController.items[index] = updated;
+          }
+        } else {
+          final response = await formController.submit(
+            endpoint: ApiEndpoint.Media_assets,
+            data: {
+              "song": formController.song_id.value,
+              "orginal_song": formController.soundtrack.value,
+            },
+          );
+          if (response != null) {
+            final song = MediaAssets.fromJson(response.data);
+            formController.items.add(song);
+          }
+        }
+        return;
     }
   }
 
@@ -365,7 +403,61 @@ class _DynamicFormPageState extends State<DynamicFormPage> {
         return _buildGenreMultipleSelect(field);
       case FieldType.multipleAlbumSelection:
         return _buildAlbumMultipleSelect(field);
+      case FieldType.multipleSongSelection:
+        return _buildSongSelect(field);
+      case FieldType.file:
+        return _buildFileField();
     }
+  }
+
+  Widget _buildFileField() {
+    return GestureDetector(
+      onTap: () async {
+        await formController.songFilePicker();
+      },
+      child: Column(
+        children: [
+          AnimatedContainer(
+            duration: const Duration(seconds: 1),
+            decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.black, width: 2)),
+            height: 100,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(18.0),
+                  child: Text('Set the Music',
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white)),
+                ),
+                Lottie.asset(
+                  "assets/lottie/loading.json",
+                  width: 150,
+                  height: 100,
+                ),
+              ],
+            ),
+          ),
+          Obx(() => Text.rich(
+                TextSpan(children: [
+                  TextSpan(
+                      text: "Selected Song: ",
+                      style: TextStyle(color: Colors.grey, fontSize: 14)),
+                  TextSpan(
+                      text: formController.soundtrack.value == null
+                          ? "no Song selected"
+                          : formController.soundtrack.value.path,
+                      style: TextStyle(color: Colors.white, fontSize: 17)),
+                ]),
+              ))
+        ],
+      ),
+    );
   }
 
   Widget _buildTextField(FormFieldConfig field, int index) {
@@ -487,64 +579,21 @@ class _DynamicFormPageState extends State<DynamicFormPage> {
   }
 
   Widget _buildAlbumMultipleSelect(FormFieldConfig field) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
-      child: Container(
-        clipBehavior: Clip.hardEdge,
-        height: 200,
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.04),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: Colors.white.withOpacity(0.08),
-            width: 0.5,
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                field.label.toUpperCase(),
-                style: const TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: 1.2,
-                  color: Color(0x4DF0ECE4),
-                ),
-              ),
-            ),
-            Expanded(
-              child: Obx(
-                () => ListView.builder(
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: formController.albumList.length,
-                  itemBuilder: (context, index) {
-                    final album = formController.albumList[index];
-                    return RadioListTile<int>(
-                      title: Text(
-                        album.title ?? "",
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                      value: album.id,
-                      groupValue: formController.album_id.value,
-                      onChanged: (value) {
-                        setState(() {
-                          formController.album_id.value = value!;
-                        });
-                        print("radio ${formController.album_id.value}");
+    return _buildRadioListModel(
+        items: formController.albumList,
+        field: field,
+        getName: (album) => album.title ?? "",
+        getId: (album) => album.id,
+        itemId: formController.album_id);
+  }
 
-                      },
-                    );
-                  },
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
+  Widget _buildSongSelect(FormFieldConfig field) {
+    return _buildRadioListModel(
+        items: formController.songList,
+        field: field,
+        getName: (song) => song.title ?? "",
+        getId: (song) => song.id,
+        itemId: formController.song_id);
   }
 
   Widget _buildImagePicker() {
@@ -556,7 +605,7 @@ class _DynamicFormPageState extends State<DynamicFormPage> {
           },
           child: Container(
             margin: const EdgeInsets.symmetric(vertical: 6),
-            height: 200,
+            height: 300,
             width: double.infinity,
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.08),
@@ -676,6 +725,71 @@ class _DynamicFormPageState extends State<DynamicFormPage> {
                 ),
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRadioListModel<T>({
+    required RxList<T> items,
+    required FormFieldConfig field,
+    required String Function(T item) getName,
+    required int Function(T item) getId,
+    required RxInt itemId,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: Container(
+        clipBehavior: Clip.hardEdge,
+        height: 200,
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.04),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: Colors.white.withOpacity(0.08),
+            width: 0.5,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                field.label.toUpperCase(),
+                style: const TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 1.2,
+                  color: Color(0x4DF0ECE4),
+                ),
+              ),
+            ),
+            Expanded(
+              child: Obx(
+                () => ListView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    final item = items[index];
+                    return RadioListTile<int>(
+                      title: Text(
+                        getName(item),
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      value: getId(item),
+                      groupValue: itemId.value,
+                      onChanged: (value) {
+                        setState(() {
+                          itemId.value = value!;
+                        });
+                      },
+                    );
+                  },
+                ),
+              ),
+            )
           ],
         ),
       ),

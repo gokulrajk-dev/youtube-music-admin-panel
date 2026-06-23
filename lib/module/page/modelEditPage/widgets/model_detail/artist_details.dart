@@ -33,16 +33,6 @@ class ArtistDetail extends StatelessWidget {
                 appBar(
                   title: 'Artist Profile',
                   onTap: () {
-                    getModelEditController.showMenu(
-                      context,
-                      () {
-                        getModelEditController.hideMenu();
-                        Get.to(() => DynamicFormPage(
-                              title: "Artist",
-                              fields: artistForm,
-                            ));
-                      },
-                    );
                   },
                 ),
                 // Scrollable body

@@ -1,3 +1,5 @@
+import 'package:basic_fundamental/data/data_model/song_module.dart';
+
 import 'artist.dart';
 
 class Album {
@@ -8,17 +10,16 @@ class Album {
   final String? description;
   final List<Artist>? artists;
 
-  // final List<Song>? songAlbum;
+  final List<Song>? songAlbum;
 
-  Album({
-    required this.id,
-    this.title,
-    this.coverImage,
-    this.releaseDate,
-    this.description,
-    this.artists,
-    // this.songAlbum
-  });
+  Album(
+      {required this.id,
+      this.title,
+      this.coverImage,
+      this.releaseDate,
+      this.description,
+      this.artists,
+      this.songAlbum});
 
   factory Album.fromJson(Map<String, dynamic> json) {
     return Album(
@@ -29,7 +30,9 @@ class Album {
       description: json['description']?.toString(),
       artists:
           (json['artists'] as List?)?.map((e) => Artist.fromJson(e)).toList(),
-      // songAlbum: (json['song_album'] as List?)?.map((song)=>Song.fromJson(song)).toList(),
+      songAlbum: (json['song_album'] as List?)
+          ?.map((song) => Song.fromJson(song))
+          .toList(),
     );
   }
 }

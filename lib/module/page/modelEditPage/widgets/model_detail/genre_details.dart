@@ -28,8 +28,6 @@ class GenreDetails extends StatelessWidget {
                   title: 'Genre Details',
                   onTap: () {},
                 ),
-
-                // Scrollable body
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(horizontal: 20),

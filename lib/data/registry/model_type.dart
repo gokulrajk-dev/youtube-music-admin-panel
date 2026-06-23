@@ -8,6 +8,7 @@ enum ModelType {
   playlist,
   genre,
   genre_rud,
+  mediaAssets,
 }
 
 
@@ -29,6 +30,9 @@ ModelType getModelType(
 
     case "album_rud":
       return ModelType.album_rud;
+
+    case "MediaAsset":
+      return ModelType.mediaAssets;
 
     default:
       throw Exception(

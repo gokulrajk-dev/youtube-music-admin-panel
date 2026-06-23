@@ -32,7 +32,7 @@ class SongRow extends StatelessWidget {
                         fit: BoxFit.cover,
                       )),
             title: Text(
-              song.title ?? "",
+              song.title!.toUpperCase(),
               style: const TextStyle(color: Colors.white),
             ),
             subtitle: Text(

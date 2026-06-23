@@ -5,8 +5,10 @@ enum FieldType {
   multipleArtistSelection,
   multipleGenreSelection,
   multipleAlbumSelection,
+  multipleSongSelection,
   image,
   date,
+  file,
 }
 
 class FormFieldConfig {

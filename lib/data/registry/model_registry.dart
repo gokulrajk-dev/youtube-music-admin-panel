@@ -1,11 +1,11 @@
-
+import 'package:basic_fundamental/data/data_model/MediaAssets.dart';
+import 'package:basic_fundamental/module/page/modelEditPage/widgets/model_tile/media_tile.dart';
 
 import '../../core/network/ApiEndpoint.dart';
 import '../../module/page/modelEditPage/widgets/model_detail/album_details.dart';
 import '../../module/page/modelEditPage/widgets/model_detail/artist_details.dart';
 import '../../module/page/modelEditPage/widgets/model_detail/genre_details.dart';
 import '../../module/page/modelEditPage/widgets/model_detail/song_details.dart';
-
 import '../../module/page/modelEditPage/widgets/model_tile/album_tile.dart';
 import '../../module/page/modelEditPage/widgets/model_tile/artist_tile.dart';
 import '../../module/page/modelEditPage/widgets/model_tile/genre_tile.dart';
@@ -55,6 +55,12 @@ class ModelRegistry {
         song: item,
       ),
     ),
+    ModelType.mediaAssets: ModelDefinition<MediaAssets>(
+        type: ModelType.mediaAssets,
+        api: ApiEndpoint.Media_assets,
+        title: "MediaAssets",
+        fromJson: MediaAssets.fromJson,
+        tileBuilder: (item) => Media_tile(mediaAssets: item))
   };
 
   static final Map<ModelType, ModelDetailDefinition> modelsDetails = {

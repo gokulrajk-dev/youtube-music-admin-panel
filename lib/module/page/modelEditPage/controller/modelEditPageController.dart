@@ -5,9 +5,12 @@ import 'package:basic_fundamental/core/network/ApiEndpoint.dart';
 import 'package:basic_fundamental/data/data_model/album_module.dart';
 import 'package:basic_fundamental/data/data_model/artist.dart';
 import 'package:basic_fundamental/data/data_model/genre.dart';
+import 'package:basic_fundamental/data/data_model/song_module.dart';
 import 'package:basic_fundamental/module/page/modelEditPage/widgets/forms/definitions/album_form.dart';
 import 'package:basic_fundamental/module/page/modelEditPage/widgets/forms/definitions/artist_form.dart';
+import 'package:basic_fundamental/module/page/modelEditPage/widgets/forms/definitions/mediaasset_form.dart';
 import 'package:dio/dio.dart' as dio;
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -32,8 +35,10 @@ class GetModelEditController extends base_controller {
   final RxList<Artist> artistList = <Artist>[].obs;
   final RxList<int> artist_id = <int>[].obs;
   final RxList<Album> albumList = <Album>[].obs;
-  final  album_id = 1.obs;
-
+  final song_id = 1.obs;
+  final RxList<Song> songList = <Song>[].obs;
+  final album_id = 1.obs;
+  final Rxn soundtrack = Rxn();
 
   Future<void> getGenreDetails() async {
     try {
@@ -45,11 +50,27 @@ class GetModelEditController extends base_controller {
       GenreList.assignAll(
         result.cast<Genre>(),
       );
-
     } catch (e) {
       print(e);
     }
-  } Future<void> getArtistDetails() async {
+  }
+
+  Future<void> getSongDetails() async {
+    try {
+      final result = await dynamicApi().getFunction(
+        ApiEndpoint.get_song,
+        Song.fromJson,
+      );
+
+      songList.assignAll(
+        result.cast<Song>(),
+      );
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> getArtistDetails() async {
     try {
       final result = await dynamicApi().getFunction(
         ApiEndpoint.artist,
@@ -59,11 +80,12 @@ class GetModelEditController extends base_controller {
       artistList.assignAll(
         result.cast<Artist>(),
       );
-
     } catch (e) {
       print(e);
     }
-  } Future<void> getAlbumDetails() async {
+  }
+
+  Future<void> getAlbumDetails() async {
     try {
       final result = await dynamicApi().getFunction(
         ApiEndpoint.get_album_song,
@@ -81,8 +103,7 @@ class GetModelEditController extends base_controller {
   Future<dio.Response?> submit({
     required String endpoint,
     required Map<String, dynamic> data,
-  }) async
-  {
+  }) async {
     try {
       dio.FormData formData = dio.FormData();
       for (var entry in data.entries) {
@@ -127,11 +148,11 @@ class GetModelEditController extends base_controller {
       return null;
     }
   }
+
   Future<dio.Response?> updated({
     required String endpoint,
     required Map<String, dynamic> data,
-  }) async
-  {
+  }) async {
     try {
       dio.FormData formData = dio.FormData();
       for (var entry in data.entries) {
@@ -174,6 +195,18 @@ class GetModelEditController extends base_controller {
       print(e.response?.statusCode);
       print(e.response?.data);
       return null;
+    }
+  }
+
+  Future<void>  songFilePicker() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.audio,
+    );
+    if(result != null && result.files.single.path != null){
+      soundtrack.value= File(result.files.single.path!);
+      print("song file: ${soundtrack.value!.path}");
+    }else{
+      print("file is not found");
     }
   }
 
@@ -254,10 +287,19 @@ class GetModelEditController extends base_controller {
             fields: songForm,
           ),
         );
+
+      case "MediaAssets":
+        hideMenu();
+        Get.to(
+          () => DynamicFormPage(
+            title: title,
+            fields: mediaAsset_form,
+          ),
+        );
     }
   }
 
-  void showMenu(BuildContext context, VoidCallback ontap) {
+  void showMenu(BuildContext context,String title, {required List<Widget> children}) {
     if (overlayEntry != null) return;
     overlayEntry = OverlayEntry(
       builder: (context) => Stack(
@@ -296,7 +338,7 @@ class GetModelEditController extends base_controller {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
                       child: Text(
-                        "Artist",
+                        title,
                         style: TextStyle(
                           color: Colors.white.withOpacity(0.6),
                           fontSize: 13,
@@ -305,7 +347,7 @@ class GetModelEditController extends base_controller {
                       ),
                     ),
                     const Divider(color: Colors.white12, height: 1),
-                    menuItem(Icons.add, "Create", ontap),
+                    ...children,
                   ],
                 ),
               ),
@@ -339,4 +381,3 @@ class GetModelEditController extends base_controller {
     );
   }
 }
-

@@ -1,6 +1,6 @@
 class ApiEndpoint {
-  static const String artist = "/songs_app/artist_views/";
-  static const String genre = "/songs_app/genre_views/";
+  static const artist = "/songs_app/artist_views/";
+  static const genre = "/songs_app/genre_views/";
   static const get_album_song = '/songs_app/album_views/';
   static const String getAllModel = '/songs_app/GetAllTable/';
   static const new_login = '/user_accounts/auth/super_google/';
@@ -12,6 +12,10 @@ class ApiEndpoint {
   static const get_current_user_playlist = '/songs_app/playlist_views/';
   static const get_user_pic_playlist = '/songs_app/playlist_edit_views/';
   static const post_histroy = '/songs_app/listen_history_views_post/';
+  static const Media_assets  ='/songs_app/Media_assets_in_song/';
+  static String Media_assets_rud(int pk){
+    return '/songs_app/Media_assets_in_song/$pk';
+  }
 
   // search api
   static String search_Song(String search) {

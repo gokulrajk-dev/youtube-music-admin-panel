@@ -1,4 +1,3 @@
-
 import 'package:basic_fundamental/module/page/modelEditPage/widgets/helperwidget/helper_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,7 +5,6 @@ import 'package:lottie/lottie.dart';
 
 import '../../../../data/registry/model_definition.dart';
 import '../controller/modelEditPageController.dart';
-
 
 class ModelEditView extends StatefulWidget {
   final ModelDefinition definition;
@@ -57,20 +55,21 @@ class _ModelEditViewState extends State<ModelEditView> {
             child: CircleIconButton(
               icon: Icons.more_vert_rounded,
               onTap: () {
-                controller.showMenu(
-                  context,
-                  () {
-                    controller.dynamicCreateButton(
-                      widget.definition.title
-                    );
-                  },
-                );
+                controller
+                    .showMenu(context, widget.definition.title, children: [
+                  controller.menuItem(
+                    Icons.add,
+                    "Create",
+                    () {
+                      controller.dynamicCreateButton(widget.definition.title);
+                    },
+                  ),
+                ]);
               },
             ),
           ),
         ],
       ),
-
       body: Obx(() {
         if (controller.isLoading.value) {
           return Center(
