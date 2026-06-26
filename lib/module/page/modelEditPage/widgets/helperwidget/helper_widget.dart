@@ -253,3 +253,126 @@ class SingleModelDetailsWidgetGenreTag extends StatelessWidget {
     );
   }
 }
+
+class SingleModelDetailsWidgetBadge extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final Color bgColor;
+  final Color textColor;
+  final Color borderColor;
+
+  const SingleModelDetailsWidgetBadge({
+    required this.label,
+    required this.icon,
+    required this.bgColor,
+    required this.textColor,
+    required this.borderColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: borderColor, width: 0.5),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 11, color: textColor),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+              color: textColor,
+              letterSpacing: 0.4,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+// dialog for the delete all model it like the confirmation code
+
+class DialogCode {
+  static Future<void> deleteDialog({required String title, required Future<void> Function() onDelete})async{
+    await showDialog(
+      context: Get.context!,
+      builder: (context) {
+        return Dialog(
+          child: Container(
+            decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.circular(20)),
+            height: 130,
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                   Text(
+                    title,
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                            onPressed: () {
+                              Get.back();
+                            },
+                            style: OutlinedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
+                            ),
+                            child: const Center(
+                              child: Text(
+                                '\tCancel\t',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            )),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                        child: ElevatedButton(
+                            onPressed: () async {
+                             await onDelete();
+                            },
+                            style: const ButtonStyle(
+                                backgroundColor:
+                                WidgetStatePropertyAll(Colors.white)),
+                            child: const Text(
+                              '\tDelete\t',
+                              style: TextStyle(color: Colors.black),
+                            )),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}

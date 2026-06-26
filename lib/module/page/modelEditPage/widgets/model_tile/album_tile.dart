@@ -2,9 +2,11 @@ import 'package:basic_fundamental/module/page/modelEditPage/widgets/forms/defini
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../../core/network/ApiEndpoint.dart';
 import '../../../../../data/data_model/album_module.dart';
 import '../../../../../data/registry/model_registry.dart';
 import '../../../../../data/registry/model_type.dart';
+import '../../controller/modelEditPageController.dart';
 import '../../view/modelDetailPageViews.dart';
 import '../forms/widgets/dynamic_form.dart';
 import '../helperwidget/commanWidgets.dart';
@@ -12,11 +14,42 @@ import '../helperwidget/helper_widget.dart';
 
 class AlbumTile extends StatelessWidget {
   final Album album;
+  final GetModelEditController getModelEditController =
+      Get.find<GetModelEditController>();
 
-  const AlbumTile({
+  AlbumTile({
     super.key,
     required this.album,
   });
+
+  static Future<void> Helper_code_for_delete_Album(
+      {required Album album,
+      required GetModelEditController getModelEditController, bool isPop =false}) async {
+    return DialogCode.deleteDialog(
+      title: "Delete this Album?",
+      onDelete: () async {
+        Get.back();
+        final response = await getModelEditController.delete(
+            endpoint: ApiEndpoint.get_user_pick_album_song(album.id));
+        if (response != null) {
+          if (response.statusCode == 204 || response.statusCode == 200) {
+            final index = getModelEditController.items
+                .indexWhere((e) => (e as Album).id == album.id);
+            if (index != -1) {
+              if(isPop)Get.back();
+              getModelEditController.items.removeAt(index);
+              Get.snackbar(
+                "Success",
+                "Delete Album successfully",
+                backgroundColor: Colors.green,
+                colorText: Colors.white,
+              );
+            }
+          }
+        }
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -130,7 +163,10 @@ class AlbumTile extends StatelessWidget {
               icon: Icons.delete_outline,
               borderColor: Colors.red,
               IconColor: Colors.red,
-              onTap: () {},
+              onTap: () async {
+                await Helper_code_for_delete_Album(
+                    album: album, getModelEditController: getModelEditController);
+              },
             )
           ],
         ),

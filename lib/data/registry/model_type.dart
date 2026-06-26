@@ -9,6 +9,7 @@ enum ModelType {
   genre,
   genre_rud,
   mediaAssets,
+  songstream
 }
 
 
@@ -33,6 +34,9 @@ ModelType getModelType(
 
     case "MediaAsset":
       return ModelType.mediaAssets;
+
+    case "SongStream":
+      return ModelType.songstream;
 
     default:
       throw Exception(

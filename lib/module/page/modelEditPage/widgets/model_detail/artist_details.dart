@@ -1,4 +1,5 @@
 import 'package:basic_fundamental/module/page/main_home_page/mainHomeController.dart';
+import 'package:basic_fundamental/module/page/modelEditPage/widgets/model_tile/artist_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -32,8 +33,7 @@ class ArtistDetail extends StatelessWidget {
                 // Top Bar
                 appBar(
                   title: 'Artist Profile',
-                  onTap: () {
-                  },
+                  onTap: () {},
                 ),
                 // Scrollable body
                 Expanded(
@@ -71,14 +71,14 @@ class ArtistDetail extends StatelessWidget {
                               color: Color(0xFF0A0A0F),
                             ),
                             child: GestureDetector(
-                              onTap:() {
+                              onTap: () {
                                 Get.dialog(
                                   ModelImage(
                                     image: artist.artistImage!,
                                   ),
                                   barrierColor: Colors.transparent,
                                 );
-                              } ,
+                              },
                               child: ClipOval(
                                 child: (artist.artistImage != null &&
                                         artist.artistImage!.isNotEmpty)
@@ -118,7 +118,7 @@ class ArtistDetail extends StatelessWidget {
                           children: [
                             if (artist.country != null &&
                                 artist.country!.isNotEmpty)
-                              _Badge(
+                              SingleModelDetailsWidgetBadge(
                                 label: artist.country!,
                                 icon: Icons.location_on_outlined,
                                 bgColor:
@@ -128,7 +128,7 @@ class ArtistDetail extends StatelessWidget {
                                     const Color(0xFF60A5FA).withOpacity(0.25),
                               ),
                             const SizedBox(width: 8),
-                            _Badge(
+                            SingleModelDetailsWidgetBadge(
                               label: 'Legend',
                               icon: Icons.star_outline,
                               bgColor:
@@ -196,35 +196,40 @@ class ArtistDetail extends StatelessWidget {
                             children: [
                               SingleModelDetailsWidgetInfoRow(
                                 icon: Icons.person_outline,
-                                iconBg: const Color(0xFF7C3AED).withOpacity(0.15),
+                                iconBg:
+                                    const Color(0xFF7C3AED).withOpacity(0.15),
                                 iconColor: const Color(0xFFA78BFA),
                                 label: 'Full Name',
                                 value: artist.artistName ?? '',
                               ),
                               SingleModelDetailsWidgetInfoRow(
                                 icon: Icons.location_on_outlined,
-                                iconBg: const Color(0xFF2563EB).withOpacity(0.15),
+                                iconBg:
+                                    const Color(0xFF2563EB).withOpacity(0.15),
                                 iconColor: const Color(0xFF60A5FA),
                                 label: 'Country',
                                 value: artist.country ?? '',
                               ),
                               SingleModelDetailsWidgetInfoRow(
                                 icon: Icons.calendar_today_outlined,
-                                iconBg: const Color(0xFF059669).withOpacity(0.15),
+                                iconBg:
+                                    const Color(0xFF059669).withOpacity(0.15),
                                 iconColor: const Color(0xFF34D399),
                                 label: 'Active Since',
                                 value: '2005',
                               ),
                               SingleModelDetailsWidgetInfoRow(
                                 icon: Icons.mic_none_outlined,
-                                iconBg: const Color(0xFFCA8A04).withOpacity(0.15),
+                                iconBg:
+                                    const Color(0xFFCA8A04).withOpacity(0.15),
                                 iconColor: const Color(0xFFFACC15),
                                 label: 'Role',
                                 value: 'Actor · Playback Singer',
                               ),
                               SingleModelDetailsWidgetInfoRow(
                                 icon: Icons.music_note_outlined,
-                                iconBg: const Color(0xFFDB2777).withOpacity(0.15),
+                                iconBg:
+                                    const Color(0xFFDB2777).withOpacity(0.15),
                                 iconColor: const Color(0xFFF472B6),
                                 label: 'Genres',
                                 isLast: true,
@@ -331,8 +336,8 @@ class ArtistDetail extends StatelessWidget {
 
                               // Delete Button
                               GestureDetector(
-                                onTap: () {
-                                  // TODO: show delete confirmation
+                                onTap: () async {
+                                  await ArtistTile.Helper_code_for_delete_artist(artist: artist, getModelEditController: getModelEditController,isPop: true);
                                 },
                                 child: Container(
                                   width: 52,
@@ -410,50 +415,6 @@ class _AvatarFallback extends StatelessWidget {
   }
 }
 
-class _Badge extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final Color bgColor;
-  final Color textColor;
-  final Color borderColor;
-
-  const _Badge({
-    required this.label,
-    required this.icon,
-    required this.bgColor,
-    required this.textColor,
-    required this.borderColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: borderColor, width: 0.5),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 11, color: textColor),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-              color: textColor,
-              letterSpacing: 0.4,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _StatItem extends StatelessWidget {
   final String value;
   final String label;
@@ -507,116 +468,3 @@ class _StatItem extends StatelessWidget {
     );
   }
 }
-//
-// class SingleModelDetailsWidgetInfoRow extends StatelessWidget {
-//   final IconData icon;
-//   final Color iconBg;
-//   final Color iconColor;
-//   final String label;
-//   final String? value;
-//   final Widget? customChild;
-//   final bool isLast;
-//
-//   const SingleModelDetailsWidgetInfoRow({
-//     required this.icon,
-//     required this.iconBg,
-//     required this.iconColor,
-//     required this.label,
-//     this.value,
-//     this.customChild,
-//     this.isLast = false,
-//   });
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       padding: const EdgeInsets.symmetric(vertical: 8),
-//       decoration: isLast
-//           ? null
-//           : BoxDecoration(
-//               border: Border(
-//                 bottom: BorderSide(
-//                   color: Colors.white.withOpacity(0.06),
-//                   width: 0.5,
-//                 ),
-//               ),
-//             ),
-//       child: Row(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           Container(
-//             width: 34,
-//             height: 34,
-//             decoration: BoxDecoration(
-//               color: iconBg,
-//               borderRadius: BorderRadius.circular(10),
-//             ),
-//             child: Icon(icon, color: iconColor, size: 16),
-//           ),
-//           const SizedBox(width: 12),
-//           Expanded(
-//             child: Column(
-//               crossAxisAlignment: CrossAxisAlignment.start,
-//               children: [
-//                 Text(
-//                   label,
-//                   style: TextStyle(
-//                     fontSize: 11,
-//                     fontWeight: FontWeight.w300,
-//                     color: const Color(0xFFF0ECE4).withOpacity(0.35),
-//                   ),
-//                 ),
-//                 const SizedBox(height: 2),
-//                 if (customChild != null)
-//                   customChild!
-//                 else
-//                   Text(
-//                     value ?? '',
-//                     style: const TextStyle(
-//                       fontSize: 14,
-//                       fontWeight: FontWeight.w400,
-//                       color: Color(0xFFF0ECE4),
-//                     ),
-//                   ),
-//               ],
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
-//
-// class SingleModelDetailsWidgetGenreTag extends StatelessWidget {
-//   final String label;
-//   final Color bgColor;
-//   final Color textColor;
-//   final Color borderColor;
-//
-//   const SingleModelDetailsWidgetGenreTag({
-//     required this.label,
-//     required this.bgColor,
-//     required this.textColor,
-//     required this.borderColor,
-//   });
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-//       decoration: BoxDecoration(
-//         color: bgColor,
-//         borderRadius: BorderRadius.circular(20),
-//         border: Border.all(color: borderColor, width: 0.5),
-//       ),
-//       child: Text(
-//         label,
-//         style: TextStyle(
-//           fontSize: 12,
-//           fontWeight: FontWeight.w400,
-//           color: textColor,
-//         ),
-//       ),
-//     );
-//   }
-// }

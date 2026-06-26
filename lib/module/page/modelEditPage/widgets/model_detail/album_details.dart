@@ -1,3 +1,5 @@
+import 'package:basic_fundamental/module/page/modelEditPage/controller/modelEditPageController.dart';
+import 'package:basic_fundamental/module/page/modelEditPage/widgets/model_tile/album_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -10,8 +12,10 @@ import '../helperwidget/helper_widget.dart';
 
 class AlbumDetail extends StatelessWidget {
   final Album album;
+  final GetModelEditController getModelEditController =
+      Get.find<GetModelEditController>();
 
-  const AlbumDetail({
+  AlbumDetail({
     super.key,
     required this.album,
   });
@@ -31,26 +35,7 @@ class AlbumDetail extends StatelessWidget {
             child: Column(
               children: [
                 // Top bar
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _NavBtn(icon: Icons.arrow_back, onTap: () => Get.back()),
-                      const Text(
-                        'Album Details',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xB3F0ECE4),
-                          letterSpacing: 0.3,
-                        ),
-                      ),
-                      _NavBtn(icon: Icons.more_vert, onTap: () {}),
-                    ],
-                  ),
-                ),
+                appBar(title: "Album Details", onTap: () {}),
 
                 Expanded(
                   child: SingleChildScrollView(
@@ -157,20 +142,22 @@ class AlbumDetail extends StatelessWidget {
                             alignment: WrapAlignment.center,
                             children: [
                               if (album.releaseDate != null)
-                                _Badge(
+                                SingleModelDetailsWidgetBadge(
                                   icon: Icons.calendar_today_outlined,
                                   label: album.releaseDate!,
-                                  bg: const Color(0xFF2563EB).withOpacity(0.12),
-                                  text: const Color(0xFF60A5FA),
-                                  border:
+                                  bgColor:
+                                      const Color(0xFF2563EB).withOpacity(0.12),
+                                  textColor: const Color(0xFF60A5FA),
+                                  borderColor:
                                       const Color(0xFF60A5FA).withOpacity(0.25),
                                 ),
-                              _Badge(
+                              SingleModelDetailsWidgetBadge(
                                 icon: Icons.album_outlined,
                                 label: 'Studio Album',
-                                bg: const Color(0xFF059669).withOpacity(0.12),
-                                text: const Color(0xFF34D399),
-                                border:
+                                bgColor:
+                                    const Color(0xFF059669).withOpacity(0.12),
+                                textColor: const Color(0xFF34D399),
+                                borderColor:
                                     const Color(0xFF34D399).withOpacity(0.25),
                               ),
                             ],
@@ -312,8 +299,11 @@ class AlbumDetail extends StatelessWidget {
 
                             // Delete
                             GestureDetector(
-                              onTap: () {
-                                // TODO: show delete confirmation
+                              onTap: () async {
+                                await AlbumTile.Helper_code_for_delete_Album(
+                                    album: album,
+                                    getModelEditController:
+                                        getModelEditController,isPop: true);
                               },
                               child: Container(
                                 width: 52,
@@ -362,30 +352,6 @@ class AlbumDetail extends StatelessWidget {
 
 // ── Helper Widgets ─────────────────────────────────────────────────────────────
 
-class _NavBtn extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback onTap;
-
-  const _NavBtn({required this.icon, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 38,
-        height: 38,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.white.withOpacity(0.08),
-          border: Border.all(color: Colors.white.withOpacity(0.14), width: 0.5),
-        ),
-        child: Icon(icon, color: const Color(0xFFF0ECE4), size: 18),
-      ),
-    );
-  }
-}
-
 class _CoverFallback extends StatelessWidget {
   final String title;
 
@@ -411,44 +377,6 @@ class _CoverFallback extends StatelessWidget {
             color: Color(0xFFE9D5FF),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _Badge extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final Color bg, text, border;
-
-  const _Badge(
-      {required this.icon,
-      required this.label,
-      required this.bg,
-      required this.text,
-      required this.border});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: border, width: 0.5),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 11, color: text),
-          const SizedBox(width: 4),
-          Text(label,
-              style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w500,
-                  color: text,
-                  letterSpacing: 0.4)),
-        ],
       ),
     );
   }

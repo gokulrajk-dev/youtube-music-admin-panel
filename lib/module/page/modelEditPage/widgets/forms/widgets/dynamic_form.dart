@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:basic_fundamental/data/data_model/MediaAssets.dart';
 import 'package:basic_fundamental/data/data_model/album_module.dart';
 import 'package:basic_fundamental/data/data_model/genre.dart';
-import 'package:basic_fundamental/module/page/modelEditPage/binding/modelEditPageBinding.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
@@ -66,7 +65,9 @@ class _DynamicFormPageState extends State<DynamicFormPage> {
     formController.selectedImage.value = null;
     formController.artist_id.value = [];
     formController.genre_id.value = [];
+    formController.song_id.value = 0;
     formController.album_id.value = 0;
+
     super.dispose();
   }
 
@@ -135,7 +136,10 @@ class _DynamicFormPageState extends State<DynamicFormPage> {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-    if (photo && widget.title != "Genre" && widget.title != "MediaAssets" && !editing) {
+    if (photo &&
+        widget.title != "Genre" &&
+        widget.title != "MediaAssets" &&
+        !editing) {
       Get.snackbar(
         "Failed",
         "pls add the Artist photo",
@@ -143,6 +147,16 @@ class _DynamicFormPageState extends State<DynamicFormPage> {
         colorText: Colors.white,
       );
       return;
+    }
+
+    if (widget.title == "MediaAssets") {
+      Get.back();
+      Get.snackbar(
+        "Success",
+        "Saved Song successfully",
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
     }
 
     await dynamicFormDataPost(widget.title);
@@ -443,18 +457,23 @@ class _DynamicFormPageState extends State<DynamicFormPage> {
               ],
             ),
           ),
-          Obx(() => Text.rich(
-                TextSpan(children: [
-                  TextSpan(
-                      text: "Selected Song: ",
-                      style: TextStyle(color: Colors.grey, fontSize: 14)),
-                  TextSpan(
-                      text: formController.soundtrack.value == null
-                          ? "no Song selected"
-                          : formController.soundtrack.value.path,
-                      style: TextStyle(color: Colors.white, fontSize: 17)),
-                ]),
-              ))
+          Obx(() {
+            final song = formController.soundtrack.value;
+            String songText = "No Song Selected";
+            if (song is File) {
+              songText = song.path;
+            }
+            return Text.rich(
+              TextSpan(children: [
+                TextSpan(
+                    text: "Selected Song: ",
+                    style: TextStyle(color: Colors.grey, fontSize: 14)),
+                TextSpan(
+                    text: songText,
+                    style: TextStyle(color: Colors.white, fontSize: 17)),
+              ]),
+            );
+          })
         ],
       ),
     );

@@ -198,14 +198,31 @@ class GetModelEditController extends base_controller {
     }
   }
 
-  Future<void>  songFilePicker() async {
+  Future<dio.Response?> delete({
+    required String endpoint,
+  }) async {
+    try{
+      dio.Response response = await dioClient.delete(
+        endpoint,
+      );
+      print("${response.statusCode}");
+      return response;
+    }on dio.DioException catch(e){
+      print(e.response?.statusCode);
+      print(e.response?.data);
+      return null;
+
+    }
+  }
+
+  Future<void> songFilePicker() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.audio,
     );
-    if(result != null && result.files.single.path != null){
-      soundtrack.value= File(result.files.single.path!);
+    if (result != null && result.files.single.path != null) {
+      soundtrack.value = File(result.files.single.path!);
       print("song file: ${soundtrack.value!.path}");
-    }else{
+    } else {
       print("file is not found");
     }
   }
@@ -299,7 +316,8 @@ class GetModelEditController extends base_controller {
     }
   }
 
-  void showMenu(BuildContext context,String title, {required List<Widget> children}) {
+  void showMenu(BuildContext context, String title,
+      {required List<Widget> children}) {
     if (overlayEntry != null) return;
     overlayEntry = OverlayEntry(
       builder: (context) => Stack(

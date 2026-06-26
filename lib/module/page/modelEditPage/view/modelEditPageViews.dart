@@ -1,6 +1,7 @@
 import 'package:basic_fundamental/module/page/modelEditPage/widgets/helperwidget/helper_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:lottie/lottie.dart';
 
 import '../../../../data/registry/model_definition.dart';
@@ -70,24 +71,32 @@ class _ModelEditViewState extends State<ModelEditView> {
           ),
         ],
       ),
-      body: Obx(() {
-        if (controller.isLoading.value) {
-          return Center(
-            child: Lottie.asset(
-              'assets/lottie/artist.json',
-              width: 450,
-              height: 400,
-            ),
+      body: LiquidPullToRefresh(
+        color: Colors.red,
+        onRefresh: () async {
+          await controller.loadData(
+            widget.definition,
           );
-        }
-        return ListView.builder(
-          itemCount: controller.items.length,
-          itemBuilder: (context, index) {
-            final item = controller.items[index];
-            return widget.definition.tileBuilder(item);
-          },
-        );
-      }),
+        },
+        child: Obx(() {
+          if (controller.isLoading.value) {
+            return Center(
+              child: Lottie.asset(
+                'assets/lottie/artist.json',
+                width: 450,
+                height: 400,
+              ),
+            );
+          }
+          return ListView.builder(
+            itemCount: controller.items.length,
+            itemBuilder: (context, index) {
+              final item = controller.items[index];
+              return widget.definition.tileBuilder(item);
+            },
+          );
+        }),
+      ),
     );
   }
 }

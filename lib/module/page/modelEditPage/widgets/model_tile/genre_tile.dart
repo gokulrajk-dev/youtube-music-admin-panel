@@ -2,20 +2,53 @@ import 'package:basic_fundamental/module/page/modelEditPage/widgets/forms/defini
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../../core/network/ApiEndpoint.dart';
 import '../../../../../data/data_model/genre.dart';
 import '../../../../../data/registry/model_registry.dart';
 import '../../../../../data/registry/model_type.dart';
+import '../../controller/modelEditPageController.dart';
 import '../../view/modelDetailPageViews.dart';
 import '../forms/widgets/dynamic_form.dart';
 import '../helperwidget/helper_widget.dart';
 
 class GenreTile extends StatelessWidget {
   final Genre genre;
+  final GetModelEditController getModelEditController =
+      Get.find<GetModelEditController>();
 
-  const GenreTile({
+  GenreTile({
     super.key,
     required this.genre,
   });
+
+  static Future<void> Helper_code_for_delete_genre(
+      {required Genre genre,
+      required GetModelEditController getModelEditController,bool isPop=false}) {
+    return DialogCode.deleteDialog(
+      title: "Delete this Genre?",
+      onDelete: () async {
+        Get.back();
+        final response = await getModelEditController.delete(
+            endpoint: ApiEndpoint.get_genre(genre.id));
+        if (response != null) {
+          if (response.statusCode == 204 || response.statusCode == 200) {
+            final index = getModelEditController.items
+                .indexWhere((e) => (e as Genre).id == genre.id);
+            if (index != -1) {
+              if(isPop)Get.back();
+              getModelEditController.items.removeAt(index);
+              Get.snackbar(
+                "Success",
+                "Delete Genre successfully",
+                backgroundColor: Colors.green,
+                colorText: Colors.white,
+              );
+            }
+          }
+        }
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,16 +137,30 @@ class GenreTile extends StatelessWidget {
                 ],
               ),
             ),
-            ListModelTile(icon: Icons.edit_outlined, borderColor: Colors.white, IconColor: const Color(0xFFF0ECE4), onTap: () {
-              Get.to(DynamicFormPage(
-                title: "Genre",
-                fields: GenreForm,
-                model: genre,
-              )
-              );
-            },),
-            const SizedBox(width: 10,),
-            ListModelTile(icon: Icons.delete_outline, borderColor: Colors.red, IconColor: Colors.red, onTap: () {  },)
+            ListModelTile(
+              icon: Icons.edit_outlined,
+              borderColor: Colors.white,
+              IconColor: const Color(0xFFF0ECE4),
+              onTap: () {
+                Get.to(DynamicFormPage(
+                  title: "Genre",
+                  fields: GenreForm,
+                  model: genre,
+                ));
+              },
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            ListModelTile(
+              icon: Icons.delete_outline,
+              borderColor: Colors.red,
+              IconColor: Colors.red,
+              onTap: () async {
+                Get.back();
+                await Helper_code_for_delete_genre(genre: genre, getModelEditController: getModelEditController);
+              },
+            )
           ],
         ),
       ),

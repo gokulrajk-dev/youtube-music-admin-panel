@@ -9,13 +9,14 @@ import '../helperwidget/helper_widget.dart';
 
 class Media_tile extends StatelessWidget {
   final MediaAssets mediaAssets;
+  final GetModelEditController getModelEditController =
+  Get.find<GetModelEditController>();
 
-  const Media_tile({super.key, required this.mediaAssets});
+   Media_tile({super.key, required this.mediaAssets});
 
   @override
   Widget build(BuildContext context) {
-    final GetModelEditController getModelEditController =
-        Get.find<GetModelEditController>();
+
     return Stack(
       children: [
         Container(
@@ -54,8 +55,8 @@ class Media_tile extends StatelessWidget {
                   mediaAssets.createdAt,
                 ),
                 buildInfo(
-                  "song id",
-                  mediaAssets.song.toString(),
+                  "song name",
+                  mediaAssets.song!.title.toString(),
                 ),
               ],
             )),

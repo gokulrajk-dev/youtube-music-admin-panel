@@ -3,20 +3,60 @@ import 'package:basic_fundamental/module/page/modelEditPage/widgets/helperwidget
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../../core/network/ApiEndpoint.dart';
 import '../../../../../data/data_model/Artist.dart';
 import '../../../../../data/registry/model_registry.dart';
 import '../../../../../data/registry/model_type.dart';
+import '../../controller/modelEditPageController.dart';
 import '../forms/definitions/artist_form.dart';
 import '../forms/widgets/dynamic_form.dart';
 import '../helperwidget/commanWidgets.dart';
 
 class ArtistTile extends StatelessWidget {
   final Artist artist;
+  final GetModelEditController getModelEditController =
+  Get.find<GetModelEditController>();
 
-  const ArtistTile({
+   ArtistTile({
     super.key,
     required this.artist,
   });
+
+static Future<void> Helper_code_for_delete_artist(
+{required Artist artist,required GetModelEditController getModelEditController,bool isPop =false}) {
+return  DialogCode.deleteDialog(
+  title: "Delete this Artist?",
+  onDelete: () async {
+    Get.back();
+    final response =
+    await getModelEditController.delete(
+        endpoint:
+        ApiEndpoint.get_artist_song(
+            artist.id));
+    if (response != null) {
+      if (response.statusCode == 204 ||
+          response.statusCode == 200) {
+        final index = getModelEditController
+            .items
+            .indexWhere((e) =>
+        (e as Artist).id ==
+            artist.id);
+        if (index != -1) {
+          if(isPop)Get.back();
+          getModelEditController.items
+              .removeAt(index);
+          Get.snackbar(
+            "Success",
+            "Delete Artist successfully",
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+          );
+        }
+      }
+    }
+  },
+);
+}
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +166,9 @@ class ArtistTile extends StatelessWidget {
               icon: Icons.delete_outline,
               borderColor: Colors.red,
               IconColor: Colors.red,
-              onTap: () {},
+              onTap: () async{
+                await Helper_code_for_delete_artist(artist: artist, getModelEditController: getModelEditController);
+              },
             )
           ],
         ),

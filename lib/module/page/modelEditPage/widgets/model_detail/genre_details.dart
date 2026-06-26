@@ -1,16 +1,20 @@
 import 'package:basic_fundamental/module/page/modelEditPage/widgets/helperwidget/helper_widget.dart';
+import 'package:basic_fundamental/module/page/modelEditPage/widgets/model_tile/genre_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../../data/data_model/genre.dart';
+import '../../controller/modelEditPageController.dart';
 import '../forms/definitions/genre_form.dart';
 import '../forms/widgets/dynamic_form.dart';
 import '../helperwidget/ListOfModel.dart';
 
 class GenreDetails extends StatelessWidget {
   final Genre genre;
+  final GetModelEditController getModelEditController =
+    Get.find<GetModelEditController>();
 
-  const GenreDetails({
+   GenreDetails({
     super.key,
     required this.genre,
   });
@@ -124,21 +128,21 @@ class GenreDetails extends StatelessWidget {
                           runSpacing: 6,
                           alignment: WrapAlignment.center,
                           children: [
-                            _MoodTag(
+                            SingleModelDetailsWidgetGenreTag(
                                 label: 'Soulful',
-                                bg: Color(0x1FA78BFA),
-                                text: Color(0xFFA78BFA),
-                                border: Color(0x40A78BFA)),
-                            _MoodTag(
+                                bgColor: Color(0x1FA78BFA),
+                                textColor: Color(0xFFA78BFA),
+                                borderColor: Color(0x40A78BFA)),
+                            SingleModelDetailsWidgetGenreTag(
                                 label: 'Evergreen',
-                                bg: Color(0x1F34D399),
-                                text: Color(0xFF34D399),
-                                border: Color(0x4034D399)),
-                            _MoodTag(
+                                bgColor: Color(0x1F34D399),
+                                textColor: Color(0xFF34D399),
+                                borderColor: Color(0x4034D399)),
+                            SingleModelDetailsWidgetGenreTag(
                                 label: 'Cinematic',
-                                bg: Color(0x1FFACC15),
-                                text: Color(0xFFFACC15),
-                                border: Color(0x40FACC15)),
+                                bgColor: Color(0x1FFACC15),
+                                textColor: Color(0xFFFACC15),
+                                borderColor: Color(0x40FACC15)),
                           ],
                         ),
 
@@ -221,12 +225,12 @@ class GenreDetails extends StatelessWidget {
                         const SizedBox(height: 14),
                         SingleModelDetailsWidget(
                             Title: "Album",
+                            padding: const EdgeInsets.all(16),
                             children: [
                               AlbumRow(
                                 song: genre.songs_genre ?? [],
                               )
-                            ],
-                            padding: const EdgeInsets.all(16)),
+                            ]),
 
                         const SizedBox(height: 14),
 
@@ -305,8 +309,9 @@ class GenreDetails extends StatelessWidget {
 
                             // Delete
                             GestureDetector(
-                              onTap: () {
-                                // TODO: show delete confirmation
+                              onTap: () async {
+                                Get.back();
+                                await GenreTile.Helper_code_for_delete_genre(genre: genre, getModelEditController: getModelEditController,isPop: true);
                               },
                               child: Container(
                                 width: 52,
@@ -338,7 +343,6 @@ class GenreDetails extends StatelessWidget {
                             ),
                           ],
                         ),
-
                         const SizedBox(height: 32),
                       ],
                     ),
@@ -353,34 +357,6 @@ class GenreDetails extends StatelessWidget {
   }
 }
 
-class _MoodTag extends StatelessWidget {
-  final String label;
-  final Color bg, text, border;
-
-  const _MoodTag(
-      {required this.label,
-      required this.bg,
-      required this.text,
-      required this.border});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: border, width: 0.5),
-      ),
-      child: Text(label,
-          style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-              color: text,
-              letterSpacing: 0.4)),
-    );
-  }
-}
 
 class _StatCard extends StatelessWidget {
   final String value, label;

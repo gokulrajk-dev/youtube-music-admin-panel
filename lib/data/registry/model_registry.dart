@@ -1,5 +1,7 @@
 import 'package:basic_fundamental/data/data_model/MediaAssets.dart';
+import 'package:basic_fundamental/data/data_model/song_stream.dart';
 import 'package:basic_fundamental/module/page/modelEditPage/widgets/model_tile/media_tile.dart';
+import 'package:basic_fundamental/module/page/modelEditPage/widgets/model_tile/songstream_tile.dart';
 
 import '../../core/network/ApiEndpoint.dart';
 import '../../module/page/modelEditPage/widgets/model_detail/album_details.dart';
@@ -60,7 +62,14 @@ class ModelRegistry {
         api: ApiEndpoint.Media_assets,
         title: "MediaAssets",
         fromJson: MediaAssets.fromJson,
-        tileBuilder: (item) => Media_tile(mediaAssets: item))
+        tileBuilder: (item) => Media_tile(mediaAssets: item)),
+    ModelType.songstream: ModelDefinition<SongStream>(
+        type: ModelType.songstream,
+        api: ApiEndpoint.get_Song_stream,
+        title: "SongStream",
+        fromJson: SongStream.fromJson,
+        tileBuilder: (item) => songStream_tile(songStream: item)),
+
   };
 
   static final Map<ModelType, ModelDetailDefinition> modelsDetails = {

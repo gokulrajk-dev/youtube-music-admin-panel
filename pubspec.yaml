@@ -55,6 +55,7 @@ dependencies:
   cached_network_image: any
   audio_service: any
   flutter_staggered_animations: ^1.1.1
+  liquid_pull_to_refresh: ^3.0.1
 
 
 
